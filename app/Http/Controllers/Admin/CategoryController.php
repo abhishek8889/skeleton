@@ -64,6 +64,6 @@ class CategoryController extends Controller
         return Inertia::render('Categories/Index',[
             'type' => 'update',
             'parent_category' => $parent_category
-        ]);
+        ]); 
     }
 }
