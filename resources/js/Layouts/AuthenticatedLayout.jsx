@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useState ,React ,useEffect } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link } from '@inertiajs/react';
+import { Link ,usePage  } from '@inertiajs/react';
+// import { usePage } from '@inertiajs/inertia-react';
+import toastr from 'toastr';
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    //     const { flash } = usePage().props;
+    //     console.log(flash);
+    //     useEffect(() => {
+    //         // console.log('adfadnfk');
+    //         // if (flash.success) toastr.success(flash.success);
+    //         // if (flash.error) toastr.error(flash.error);
+    //         console.log(flash);
+    //     }, [flash]);
 
     return (
+
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
