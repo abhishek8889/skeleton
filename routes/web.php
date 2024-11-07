@@ -5,6 +5,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\CategoryController;
+// use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +36,12 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('categories',[CategoryController::class,'index'])->name('categories');
     Route::get('category/add',[CategoryController::class,'addCategory'])->name('categories.add');
     Route::post('category-store',[CategoryController::class,'store'])->name('categories.store');
-
+    
+    //
+    Route::get('posts',[PostController::class ,'index'])->name('posts'); 
+    Route::get('posts/create',[PostController::class ,'create'])->name('posts.create'); 
+    Route::post('posts/store',[PostController::class ,'store'])->name('posts.store'); 
+    
 
 });
 

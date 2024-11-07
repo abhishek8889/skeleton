@@ -17,7 +17,7 @@ export default forwardRef(function SelectBox({ className = '', isFocused = false
                 className
             }
         >
-
+        <option key="" value="Select Option">Select Option</option>
         {options.length > 0 ? (
             options.map((option) => (
                 <option key={option.id} value={option.name}>
