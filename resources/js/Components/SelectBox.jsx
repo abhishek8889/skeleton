@@ -20,7 +20,7 @@ export default forwardRef(function SelectBox({ className = '', isFocused = false
         <option key="" value="Select Option">Select Option</option>
         {options.length > 0 ? (
             options.map((option) => (
-                <option key={option.id} value={option.name}>
+                <option key={option.id} value={option.id}>
                     {option.name}
                 </option>
             ))

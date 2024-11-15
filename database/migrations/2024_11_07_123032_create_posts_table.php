@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('slug');
             $table->string('short_name');
             $table->foreignId('category_id')
                     ->constrained('categories')
@@ -34,6 +35,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('post_tag', function (Blueprint $table) {
+            $table->dropForeign('post_tag_post_id_foreign'); // Drop the foreign key constraint
+        });
         Schema::dropIfExists('posts');
     }
 };

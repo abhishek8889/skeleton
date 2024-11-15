@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CreatePost from './Partials/Create';
 import { Head } from '@inertiajs/react';
 import LinkBox from '../../Components/LinkBox';
-
+import Table from '@/Components/Table/Table';
 
 export default function Index({ auth, mustVerifyEmail, status, type ,categories}) {
 
@@ -36,7 +36,8 @@ export default function Index({ auth, mustVerifyEmail, status, type ,categories}
                                 categories={categories}
                             /> :
                             type === "list" ?
-                                <div>list</div> :
+                                <Table />
+                                :
                                 type === "update" ?
                                     <div>update</div> : null
                         }

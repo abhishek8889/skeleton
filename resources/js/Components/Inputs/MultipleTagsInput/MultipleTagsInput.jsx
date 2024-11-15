@@ -1,14 +1,25 @@
 import { React, useState } from 'react';
 
-const MultipleTagsInput = ({...props}) => {
+const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
-
     const handleKeyDown = (event) => {
+        // if (event.key === 'Enter' && inputValue.trim()) {
+        //     if (!tags.includes(inputValue.trim())) {
+        //         setTags([...tags, inputValue.trim()]);
+        //     }
+        //     setInputValue(''); // Clear input field
+        //     event.preventDefault(); // Prevent form submission if using Enter
+        // }
+
+
         if (event.key === 'Enter' && inputValue.trim()) {
-            if (!tags.includes(inputValue.trim())) {
-                setTags([...tags, inputValue.trim()]);
+            const newTag = inputValue.trim();
+            if (!tags.includes(newTag)) {
+                const updatedTags = [...tags, newTag];
+                setTags(updatedTags);
+                updateTagList(updatedTags); // Send updated tags to parent
             }
             setInputValue(''); // Clear input field
             event.preventDefault(); // Prevent form submission if using Enter
@@ -17,9 +28,11 @@ const MultipleTagsInput = ({...props}) => {
 
 
     const handleRemoveTag = (tagToRemove) => {
-        setTags(tags.filter(tag => tag !== tagToRemove));
+        const updatedTags = tags.filter(tag => tag !== tagToRemove);
+        // setTags(tags.filter(tag => tag !== tagToRemove));
+        setTags(updatedTags);
+        updateTagList(updatedTags);
     };
-    // console.log(tags);
     
     return (
         <div>

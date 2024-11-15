@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef ,useState } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -13,18 +13,29 @@ import MultipleTagsInput from '@/Components/Inputs/MultipleTagsInput/MultipleTag
 import NewForm from '@/Components/NewForm';
 import TextArea from '@/Components/Inputs/TextArea/TextArea';
 // import NewForm from '@/Components/NewForm';
-export default function CreatePost({ className = '' ,categories=[]}) {
-
+export default function CreatePost({ className = '' ,categories=[] }) {
+    const [tagList, setTagList] = useState([]);
     const { data, setData, errors, post, reset, processing, recentlySuccessful } = useForm({
-        'name' : ''
+        'title' : '',
+        'short_name' : '',
+        'category_id' : '',
+        'author' : '',
+        'excerpt' : '',
+        'content' : '',        
+        'image' : '',
+        'tags' : tagList || [],
     });
 
-    // const handleFileChange = (e) => {
-    //     setData('image', e.target.files[0]);
-    // };
+
+    const updateTagList = (newTags) => {
+        setTagList(newTags);
+        setData('tags', newTags); // Update form data with new tags
+    };
+    // console.log(`Tag list => ${tagList}`);
 
     const createPost = (e) => {
         e.preventDefault();
+
         post(route('posts.store'), {
             preserveScroll: true,
             onSuccess: (response) => {
@@ -53,16 +64,16 @@ export default function CreatePost({ className = '' ,categories=[]}) {
 
             <form onSubmit={createPost} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Post Name" />
+                    <InputLabel htmlFor="title" value="Post title" />
                     <TextInput
-                        id="name"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
+                        id="title"
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
                         type="text"
                         className="mt-1 block w-full"
-                        autoComplete="name"
+                        autoComplete="title"
                     />
-                    <InputError message={errors.name} className="mt-2" />
+                    <InputError message={errors.title} className="mt-2" />
                 </div>
 
                 <div>
@@ -79,16 +90,16 @@ export default function CreatePost({ className = '' ,categories=[]}) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="category" value="Category" />
+                    <InputLabel htmlFor="category_id" value="Category" />
                     <SelectBox
-                        id="category"
+                        id="category_id"
                         value={data.categories}
-                        onChange={(e) => setData('category', e.target.value)}
+                        onChange={(e) => setData('category_id', e.target.value)}
                         className="mt-1 block w-full"
-                        autoComplete="category"
+                        autoComplete="category_id"
                         options={categories}
                     />
-                    <InputError message={errors.category} className="mt-2" />
+                    <InputError message={errors.category_id} className="mt-2" />
                 </div>
 
                 <div>
@@ -120,7 +131,20 @@ export default function CreatePost({ className = '' ,categories=[]}) {
 
                 <div>
                     <InputLabel htmlFor="tags" value="Add Tags" />
-                    <MultipleTagsInput id="tags"/>
+                    <MultipleTagsInput id="tags" tagList={tagList} updateTagList={updateTagList}  />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="author" value="Author" />
+                    <TextInput
+                        id="author"
+                        value={data.author}
+                        onChange={(e) => setData('author', e.target.value)}
+                        type="text"
+                        className="mt-1 block w-full"
+                        autoComplete="author"
+                    />
+                    <InputError message={errors.author} className="mt-2" />
                 </div>
 
                 <div>
@@ -133,6 +157,9 @@ export default function CreatePost({ className = '' ,categories=[]}) {
                     />
                     <InputError message={errors.image} className="mt-2" />
                 </div>
+
+                
+
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
