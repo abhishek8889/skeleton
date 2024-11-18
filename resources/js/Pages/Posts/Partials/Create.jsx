@@ -15,21 +15,29 @@ import TextArea from '@/Components/Inputs/TextArea/TextArea';
 // import NewForm from '@/Components/NewForm';
 export default function CreatePost({ className = '' ,categories=[] }) {
     const [tagList, setTagList] = useState([]);
+    const [metaTags, setMetaTags] = useState([]);
+
     const { data, setData, errors, post, reset, processing, recentlySuccessful } = useForm({
         'title' : '',
         'short_name' : '',
         'category_id' : '',
         'author' : '',
         'excerpt' : '',
-        'content' : '',        
+        'content' : '',
         'image' : '',
         'tags' : tagList || [],
+        'meta_tags' : metaTags || [],
     });
 
 
     const updateTagList = (newTags) => {
         setTagList(newTags);
         setData('tags', newTags); // Update form data with new tags
+    };
+
+    const updateMetaTags = (newTags) => {
+        setMetaTags(newTags);
+        setData('meta_tags', newTags); // Update form data with new meta tags
     };
     // console.log(`Tag list => ${tagList}`);
 
@@ -135,6 +143,11 @@ export default function CreatePost({ className = '' ,categories=[] }) {
                 </div>
 
                 <div>
+                    <InputLabel htmlFor="meta_tags" value="Add Meta Tags" />
+                    <MultipleTagsInput id="meta_tags" tagList={metaTags} updateTagList={updateMetaTags}  />
+                </div>
+
+                <div>
                     <InputLabel htmlFor="author" value="Author" />
                     <TextInput
                         id="author"
@@ -158,7 +171,7 @@ export default function CreatePost({ className = '' ,categories=[] }) {
                     <InputError message={errors.image} className="mt-2" />
                 </div>
 
-                
+
 
 
                 <div className="flex items-center gap-4">

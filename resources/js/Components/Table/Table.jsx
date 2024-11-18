@@ -1,21 +1,24 @@
-export default function Table({ columns, data }) {
+export default function Table({ tagHeader, posts }) {
+
+    // console.log(tagHeader);
+
     return (
         <>
             <table className="table">
                 <thead>
                     <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                       {tagHeader.map((header)=> (
+                            <th scope="col">{header}</th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
+                        {posts.map((post)=> (
+                            tagHeader.map((header)=> (
+                                <th scope="col">{post[header]}</th>
+                            ))
+                        ))}
                     </tr>
                 </tbody>
             </table>

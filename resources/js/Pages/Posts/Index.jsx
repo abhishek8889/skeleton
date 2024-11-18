@@ -6,10 +6,16 @@ import { Head } from '@inertiajs/react';
 import LinkBox from '../../Components/LinkBox';
 import Table from '@/Components/Table/Table';
 
-export default function Index({ auth, mustVerifyEmail, status, type ,categories}) {
+export default function Index({ auth, mustVerifyEmail, status, type ,categories ,posts}) {
 
     const [show, setShow] = useState();
-    console.log(categories);
+    const [tagHeader,setTagHeader] = useState([
+        'title',
+        'slug',
+        'short_name',
+        'excerpt',
+        'status'
+    ]);
 
     return (
         <AuthenticatedLayout
@@ -20,13 +26,13 @@ export default function Index({ auth, mustVerifyEmail, status, type ,categories}
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-               
+
                     {type === "create" ?
-                         <LinkBox to={route('posts')} >Posts</LinkBox> :  
+                         <LinkBox to={route('posts')} >Posts</LinkBox> :
                             type === "list" ?
-                                <LinkBox to={route('posts.create')}> Add Posts </LinkBox> 
+                                <LinkBox to={route('posts.create')}> Add Posts </LinkBox>
                                     : null}
-             
+
 
 
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
@@ -36,7 +42,7 @@ export default function Index({ auth, mustVerifyEmail, status, type ,categories}
                                 categories={categories}
                             /> :
                             type === "list" ?
-                                <Table />
+                                <Table posts={posts} tagHeader={tagHeader} />
                                 :
                                 type === "update" ?
                                     <div>update</div> : null

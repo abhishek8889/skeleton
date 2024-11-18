@@ -20,10 +20,11 @@ return new class extends Migration
                     ->constrained('categories')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
+            // $table->text('meta_tags')->nullable();
             $table->string('author',100)->nullable();
             $table->string('image_name')->nullable();
             $table->string('excerpt')->nullable();
-            $table->text('content');
+            // $table->text('content');
             $table->tinyInteger('status')->nullable()->default(1)->comment('1:publish');
             $table->tinyInteger('type_id')->nullable();
             $table->timestamps();

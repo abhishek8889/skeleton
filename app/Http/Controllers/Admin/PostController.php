@@ -18,20 +18,21 @@ class PostController extends Controller
     public function __construct(ModelService $modelService){
         $this->postService = $modelService->postService();
         $this->tagService = $modelService->tagService();
-        
+
     }
 
     public function index(Request $request){
-
+        $posts = Post::get();
         return Inertia::render('Posts/Index',[
-            'type' => 'list'
+            'type' => 'list',
+            'posts' => $posts
         ]);
 
     }
 
     public function create(Request $request){
         $categories = Category::get();
-        
+
         return Inertia::render('Posts/Index',[
             'type' => 'create',
             'categories' => $categories
@@ -40,10 +41,11 @@ class PostController extends Controller
 
     public function store(Request $request){
         try{
+            // dd($request->all());
             $tag_list = [];
             if(!empty($request->tags) && is_array($request->tags)){
             //    dd($request->tags);
-                foreach($request->tags as $tag){ 
+                foreach($request->tags as $tag){
                     array_push($tag_list , $this->tagService->storeAndReturnId($tag));
                 }
             }
@@ -53,9 +55,6 @@ class PostController extends Controller
         }catch(Exception $e){
             dd($e->getMessage());
         }
-        
-        
-
     }
 
 }
