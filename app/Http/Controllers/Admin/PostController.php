@@ -57,4 +57,23 @@ class PostController extends Controller
         }
     }
 
+    public function delete($postId){
+        // dd($postId , $request->all());
+        if(!empty($postId)){
+            $this->postService->remove($postId,'id');
+        }
+    }
+
+    public function update(Request $request , $postId){
+        // dd($postId);
+        $categories = Category::get();
+        $postDetail = $this->postService->getDetail($postId);
+        
+        return Inertia::render('Posts/Index',[
+            'type' => 'edit',
+            'categories' => $categories,
+            'postDetail' => $postDetail
+        ]);
+    }
+
 }

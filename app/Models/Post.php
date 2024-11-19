@@ -45,6 +45,23 @@ class Post extends Model
         return $data;
     }
 
+    public static function remove($id, $key)
+    {
+        $data = DB::transaction(function () use ($id, $key) {
+            return self::where($key, $id)->delete();
+        });
+
+        return $data;
+    }
+
+    public static function getDetail($id){
+        $data = DB::transaction(function () use ($id) {
+            return self::with('postMeta','tags')->find($id);
+        });
+        return $data;
+    }
+
+
 
     public function postMeta(){
         return $this->hasOne(PostMeta::class,'post_id','id');

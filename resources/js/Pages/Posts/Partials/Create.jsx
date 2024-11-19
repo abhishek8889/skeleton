@@ -13,17 +13,23 @@ import MultipleTagsInput from '@/Components/Inputs/MultipleTagsInput/MultipleTag
 import NewForm from '@/Components/NewForm';
 import TextArea from '@/Components/Inputs/TextArea/TextArea';
 // import NewForm from '@/Components/NewForm';
-export default function CreatePost({ className = '' ,categories=[] }) {
+export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,type='' }) {
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
+    const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
 
-    const { data, setData, errors, post, reset, processing, recentlySuccessful } = useForm({
-        'title' : '',
-        'short_name' : '',
-        'category_id' : '',
-        'author' : '',
-        'excerpt' : '',
-        'content' : '',
+    // // console.log(`type`);
+    // // console.log(type);
+    // console.log(`postDetail`);
+    // console.log(postDetail);
+
+    const { data, setData, errors, post, reset, processing, recentlySuccessful  } = useForm({
+        'title' : (type=='edit') ? postDetail.title : '',
+        'short_name' : (type=='edit') ? postDetail.short_name : '',
+        'category_id' : (type=='edit') ? postDetail.category_id : '',
+        'author' : (type=='edit') ? postDetail.author : '',
+        'excerpt' : (type=='edit') ? postDetail.excerpt : '',
+        'content' : (type=='edit') ? postDetail.post_meta.content : '',
         'image' : '',
         'tags' : tagList || [],
         'meta_tags' : metaTags || [],
@@ -39,6 +45,9 @@ export default function CreatePost({ className = '' ,categories=[] }) {
         setMetaTags(newTags);
         setData('meta_tags', newTags); // Update form data with new meta tags
     };
+
+    
+
     // console.log(`Tag list => ${tagList}`);
 
     const createPost = (e) => {
@@ -67,7 +76,7 @@ export default function CreatePost({ className = '' ,categories=[] }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Add Post</h2>
+                <h2 className="text-lg font-medium text-gray-900">{pageTile}</h2>
             </header>
 
             <form onSubmit={createPost} className="mt-6 space-y-6">
