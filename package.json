@@ -20,11 +20,13 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-react": "^9.3.1",
         "@cloudinary/react": "^1.13.1",
         "@cloudinary/url-gen": "^1.21.0",
         "@inertiajs/inertia-react": "^0.8.1",
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.3",
+        "ckeditor5": "^43.3.1",
         "toastr": "^2.1.4"
     }
 }

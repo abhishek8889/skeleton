@@ -12,30 +12,53 @@ import toastr from 'toastr';
 import MultipleTagsInput from '@/Components/Inputs/MultipleTagsInput/MultipleTagsInput';
 import NewForm from '@/Components/NewForm';
 import TextArea from '@/Components/Inputs/TextArea/TextArea';
+// CkEditor
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import {
+  ClassicEditor,
+  Bold,
+  Essentials,
+  Heading,
+  Indent,
+  IndentBlock,
+  Italic,
+  Link,
+  List,
+  MediaEmbed,
+  Paragraph,
+  Table,
+  Undo,
+  CodeBlock,
+  SourceEditing
+} from 'ckeditor5';
+import 'ckeditor5/ckeditor5.css';
+
+
+
 // import NewForm from '@/Components/NewForm';
 export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,type='' }) {
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
     const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
-
-    // // console.log(`type`);
-    // // console.log(type);
-    // console.log(`postDetail`);
-    // console.log(postDetail);
+    const [editorData , setEditorData] = useState({
+        content : '',
+        excerpt : ''
+    });
 
     const { data, setData, errors, post, reset, processing, recentlySuccessful  } = useForm({
         'title' : (type=='edit') ? postDetail.title : '',
         'short_name' : (type=='edit') ? postDetail.short_name : '',
         'category_id' : (type=='edit') ? postDetail.category_id : '',
         'author' : (type=='edit') ? postDetail.author : '',
-        'excerpt' : (type=='edit') ? postDetail.excerpt : '',
-        'content' : (type=='edit') ? postDetail.post_meta.content : '',
+        'excerpt' : (type =='edit')?postDetail.excerpt : '',
+        'content' : (type =='edit')?postDetail.post_meta.content :'' ,
         'image' : '',
         'tags' : tagList || [],
         'meta_tags' : metaTags || [],
+
     });
 
-
+    console.log(editorData);
     const updateTagList = (newTags) => {
         setTagList(newTags);
         setData('tags', newTags); // Update form data with new tags
@@ -46,7 +69,15 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
         setData('meta_tags', newTags); // Update form data with new meta tags
     };
 
-    
+    const handleEditorChange = (field) => (event, editor) => {
+        const data = editor.getData(); // Retrieve the editor's content
+        setEditorData((prev) => ({
+            ...prev,
+            [field] : data
+        }))
+        setData(field , data);
+    };
+
 
     // console.log(`Tag list => ${tagList}`);
 
@@ -121,26 +152,76 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
                 <div>
                     <InputLabel htmlFor="excerpt" value="Excerpt" />
-                    <TextArea
+                    {/* <TextArea
                         id="excerpt"
                         rows={3}
                         value={data.excerpt}
                         onChange={(e) => setData('excerpt', e.target.value)}
                         className=""
                         autoComplete="excerpt"
+                    /> */}
+
+                    <CKEditor
+                        editor={ ClassicEditor }
+                        config={ {
+                            toolbar: [
+                            'undo', 'redo', '|',
+                            'heading', '|', 'bold', 'italic', '|',
+                            'link', 'insertTable', 'mediaEmbed', '|',
+                            'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
+                            ],
+                            plugins: [
+                            Bold,
+                            Essentials,
+                            Heading,
+                            Indent,
+                            IndentBlock,
+                            Italic,
+                            Link,
+                            List,
+                            MediaEmbed,
+                            Paragraph,
+                            Table,
+                            Undo,
+                            CodeBlock,
+                            SourceEditing
+                            ],
+                        } }
+
+                        id="excerpt"
+                        data={type === 'edit' ? postDetail.excerpt : editorData.excerpt}
+                        onChange={(handleEditorChange('excerpt'))}
                     />
                     <InputError message={errors.excerpt} className="mt-2" />
                 </div>
 
                 <div>
                     <InputLabel htmlFor="content" value="Content" />
-                    <TextArea
+                    {/* <TextArea
                         id="content"
                         rows={3}
                         value={data.content}
                         onChange={(e) => setData('content', e.target.value)}
                         className=""
                         autoComplete="content"
+                    /> */}
+
+                    <CKEditor
+                        editor={ ClassicEditor }
+                        config={ {
+                            toolbar: [
+                            'undo', 'redo', '|',
+                            'heading', '|', 'bold', 'italic', '|',
+                            'link', 'insertTable', 'mediaEmbed', '|',
+                            'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
+                            ],
+                            plugins: [Bold,Essentials,Heading,Indent,IndentBlock,Italic,Link,List,MediaEmbed,Paragraph,Table,Undo,CodeBlock,SourceEditing],
+                            // initialData: '<p>Add your text here.</p>',
+                        } }
+
+                        id="content"
+                        data={type === 'edit' ? postDetail.post_meta.content : editorData.content}
+                        onChange={(handleEditorChange('content'))}
                     />
 
                     <InputError message={errors.content} className="mt-2" />
