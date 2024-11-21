@@ -8,10 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class PostMeta extends Model
 {
     use HasFactory;
-    protected $fillable = ['post_id','content','meta_tags   '];
+    protected $fillable = ['post_id','content','meta_tags'];
+
+    // Accessor
+
+    public function getMetaTagsAttribute($value)
+    {
+        $metaTags = json_decode($value, true);
+
+        return $metaTags ?: ['default' => 'No meta tags available'];
+    }
 
     public function posts()
     {
         return $this->belongsTo(Post::class,'id','post_id');
     }
+
 }

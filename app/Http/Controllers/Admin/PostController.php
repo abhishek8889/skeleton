@@ -41,7 +41,7 @@ class PostController extends Controller
 
     public function store(Request $request){
         try{
-            dd($request->all());
+            // dd($request->all());
             $tag_list = [];
             if(!empty($request->tags) && is_array($request->tags)){
             //    dd($request->tags);
@@ -51,14 +51,12 @@ class PostController extends Controller
             }
             $request['tag_id'] = $tag_list;
             $post = $this->postService->store($request->all());
-            // dd($post);
         }catch(Exception $e){
             dd($e->getMessage());
         }
     }
 
     public function delete($postId){
-        // dd($postId , $request->all());
         if(!empty($postId)){
             $this->postService->remove($postId,'id');
         }
@@ -68,6 +66,7 @@ class PostController extends Controller
         // dd($postId);
         $categories = Category::get();
         $postDetail = $this->postService->getDetail($postId);
+        // dd($postDetail);
 
         return Inertia::render('Posts/Index',[
             'type' => 'edit',

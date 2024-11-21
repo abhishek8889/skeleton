@@ -27,7 +27,7 @@ export default function Index({ auth, mustVerifyEmail, status, type='' ,categori
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-                    {type === "create" ?
+                    {type === "create"  || type === "edit" ?
                          <LinkBox to={route('posts')} >Posts</LinkBox> :
                             type === "list" ?
                                 <LinkBox to={route('posts.create')}> Add Posts </LinkBox>

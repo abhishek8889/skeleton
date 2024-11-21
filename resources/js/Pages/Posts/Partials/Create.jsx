@@ -1,4 +1,4 @@
-import { useRef ,useState } from 'react';
+import { useRef ,useState ,useEffect } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -58,13 +58,30 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
     });
 
-    console.log(editorData);
+    // console.log(postDetail.post_meta.meta_tags);
+    useEffect(() => {
+        if (type === 'edit') {
+            console.log(postDetail.post_meta.meta_tags);
+            console.log(type)
+            // setMetaTags(['hello','asdfkadsf']);
+            setMetaTags(postDetail.post_meta.meta_tags);
+            setData('meta_tags', postDetail.post_meta.meta_tags);
+            updateMetaTags(postDetail.post_meta.meta_tags)
+        }
+    }, [type ,postDetail]);
+
+    // if (type === 'edit') {
+    //     setMetaTags(['hello','asdfkadsf']);
+    // }
+
     const updateTagList = (newTags) => {
         setTagList(newTags);
         setData('tags', newTags); // Update form data with new tags
     };
 
     const updateMetaTags = (newTags) => {
+        console.log('new tags');
+        console.log(newTags);
         setMetaTags(newTags);
         setData('meta_tags', newTags); // Update form data with new meta tags
     };
