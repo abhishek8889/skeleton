@@ -10,11 +10,42 @@ export default function Index({ auth, mustVerifyEmail, status, type='' ,categori
 
     const [show, setShow] = useState();
     const [tagHeader,setTagHeader] = useState([
-        'title',
-        'slug',
-        'short_name',
-        'excerpt',
-        'status'
+        {
+            key: 'image_name',
+            type: 'image', // or any type you need
+            title: 'Image Name', // or any title you need
+        },
+        {
+            key: 'title',
+            type: 'text',
+            title: 'Title',
+        },
+        {
+            key: 'slug',
+            type: 'text',
+            title: 'Slug',
+        },
+        {
+            key: 'short_name',
+            type: 'text',
+            title: 'Short Name',
+        },
+        {
+            key: 'excerpt',
+            type: 'text',
+            title: 'Excerpt',
+        },
+        {
+            key: 'status',
+            type: 'boolean',
+            title: 'Status',
+        },
+        // 'image_name',
+        // 'title',
+        // 'slug',
+        // 'short_name',
+        // 'excerpt',
+        // 'status'
     ]);
 
     return (

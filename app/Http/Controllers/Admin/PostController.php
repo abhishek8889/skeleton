@@ -10,14 +10,18 @@ use App\Services\ModelService;
 use App\Models\Post;
 use App\Models\Tag;
 use Exception;
+use App\Services\FileUploadService;
 
 class PostController extends Controller
 {
     protected Post $postService;
     protected Tag $tagService;
-    public function __construct(ModelService $modelService){
+    protected $fileUploadService;
+    
+    public function __construct(ModelService $modelService, FileUploadService $fileUploadService){
         $this->postService = $modelService->postService();
         $this->tagService = $modelService->tagService();
+        $this->fileUploadService =  $fileUploadService;
 
     }
 
@@ -42,9 +46,15 @@ class PostController extends Controller
     public function store(Request $request){
         try{
             // dd($request->all());
+
             $tag_list = [];
+            if($request->has('image')){
+                $image = $request->file('image');
+                $upload_url = $this->fileUploadService->upload($image,'images','cloudinary');
+                $request['image_name'] = $upload_url['image_url'];
+                $request['public_id'] = $upload_url['public_id'];
+            }
             if(!empty($request->tags) && is_array($request->tags)){
-            //    dd($request->tags);
                 foreach($request->tags as $tag){
                     array_push($tag_list , $this->tagService->storeAndReturnId($tag));
                 }

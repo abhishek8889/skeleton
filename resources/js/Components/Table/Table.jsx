@@ -27,7 +27,7 @@ export default function Table({ tagHeader, posts: initialPosts , editRoute , del
                 <thead>
                     <tr>
                        {tagHeader.map((header)=> (
-                            <th scope="col">{header}</th>
+                            <th scope="col">{header.title}</th>
                         ))}
                         <th scope="col">Action</th>
 
@@ -38,7 +38,13 @@ export default function Table({ tagHeader, posts: initialPosts , editRoute , del
                             <tr key={postIndex}>
                                 { 
                                 tagHeader.map((header)=> (
-                                    <td scope="col">{post[header]}</td>
+                                    header.type == 'image' ? 
+                                    <td scope="col">
+                                        <img height="50" width="50" src={post[header.key]}></img>
+                                    </td> : 
+                                    <td scope="col">
+                                        {post[header.key]}
+                                    </td>
                                 ))
                                 }
                                 <td scope="col"> 

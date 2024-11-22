@@ -24,7 +24,7 @@ class Post extends Model
                 'short_name' => $request['short_name'] ,
                 'category_id' => $request['category_id'] ,
                 'author' => $request['author'] ,
-                // 'image_name' => $request->image_name,
+                'image_name' => $request['image_name'] ?? NULL,
                 'excerpt' => $request['excerpt'] ,
                 // 'content' => $request['content']
             ]);

@@ -3,24 +3,9 @@
 namespace  App\Services;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Cloudinary\Laravel\Facades\Cloudinary;
+use Cloudinary\Api\Upload\UploadApi;
 class FileUploadService{
-
-
-    // /**
-    //  * Save the uploaded image.
-    //  *
-    //  * @param \Illuminate\Http\UploadedFile $image
-    //  * @param string $path
-    //  * @return string $filename
-    // */
-
-    //  public function saveFile($file, $type ,$directory='')
-    // {
-    //     if($type = 'image'){
-    //         $this->uploadImage($file,$directory='');
-    //     }
-
-    // }
 
     /**
      * Save an image to the specified storage disk.
@@ -31,16 +16,14 @@ class FileUploadService{
      */
     public function upload( UploadedFile $file, $path = 'images', $disk = 'local')
     {
-        if(empty($file)){
-            return array('status' => false ,'message' => 'No file found');
+        $uploadedFile = [];
+        if($disk == 'cloudinary'){
+            $uploadedFile['image_url'] = cloudinary()->upload($file->getRealPath())->getSecurePath();
+            $uploadedFile['public_id'] = cloudinary()->upload($file->getRealPath())->getPublicId();
         }
-        $filename = time() . '.' . $file->getClientOriginalExtension();
-        Storage::disk($disk)->putFileAs($path, $file, $filename);
-        return array(
-            'url' => Storage::disk($disk)->url("{$path}/{$filename}"),
-            'file_name' => $filename,
-            'directory_path' => $path.'/'.$filename
-        );
+        dd($uploadedFile);
+        return $uploadedFile;
+      
     }
 
 }
