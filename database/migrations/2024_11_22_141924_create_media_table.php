@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('url');
-            $table->string('unique_id')->comment('public_id in cloudinary');                    
+            $table->string('type');
+            $table->string('size')->nullable();
+            $table->string('extension')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->string('cloud_provider')->nullable();
+            $table->string('unique_id')->nullable()->comment('public_id in cloudinary');                    
             $table->timestamps();
         });
     }

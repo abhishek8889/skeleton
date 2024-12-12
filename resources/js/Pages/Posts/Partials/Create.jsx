@@ -37,6 +37,8 @@ import 'ckeditor5/ckeditor5.css';
 
 // import NewForm from '@/Components/NewForm';
 export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,type='' }) {
+    // console.log(postDetail)
+    // console.log(type)
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
     const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
@@ -55,24 +57,20 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
         'image' : '',
         'tags' : tagList || [],
         'meta_tags' : metaTags || [],
-
     });
 
     // console.log(postDetail.post_meta.meta_tags);
     useEffect(() => {
         if (type === 'edit') {
-            console.log(postDetail.post_meta.meta_tags);
-            console.log(type)
-            // setMetaTags(['hello','asdfkadsf']);
+            // console.log(postDetail.tags);
             setMetaTags(postDetail.post_meta.meta_tags);
             setData('meta_tags', postDetail.post_meta.meta_tags);
-            updateMetaTags(postDetail.post_meta.meta_tags)
+            updateMetaTags(postDetail.post_meta.meta_tags);
+            updateTagList(['one','two']);
+
         }
     }, [type ,postDetail]);
 
-    // if (type === 'edit') {
-    //     setMetaTags(['hello','asdfkadsf']);
-    // }
 
     const updateTagList = (newTags) => {
         setTagList(newTags);
@@ -82,6 +80,7 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
     const updateMetaTags = (newTags) => {
         console.log('new tags');
         console.log(newTags);
+        
         setMetaTags(newTags);
         setData('meta_tags', newTags); // Update form data with new meta tags
     };
@@ -169,14 +168,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
                 <div>
                     <InputLabel htmlFor="excerpt" value="Excerpt" />
-                    {/* <TextArea
-                        id="excerpt"
-                        rows={3}
-                        value={data.excerpt}
-                        onChange={(e) => setData('excerpt', e.target.value)}
-                        className=""
-                        autoComplete="excerpt"
-                    /> */}
 
                     <CKEditor
                         editor={ ClassicEditor }
@@ -214,14 +205,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
                 <div>
                     <InputLabel htmlFor="content" value="Content" />
-                    {/* <TextArea
-                        id="content"
-                        rows={3}
-                        value={data.content}
-                        onChange={(e) => setData('content', e.target.value)}
-                        className=""
-                        autoComplete="content"
-                    /> */}
 
                     <CKEditor
                         editor={ ClassicEditor }
@@ -233,7 +216,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
                             'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
                             ],
                             plugins: [Bold,Essentials,Heading,Indent,IndentBlock,Italic,Link,List,MediaEmbed,Paragraph,Table,Undo,CodeBlock,SourceEditing],
-                            // initialData: '<p>Add your text here.</p>',
                         } }
 
                         id="content"
@@ -246,6 +228,9 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
                 <div>
                     <InputLabel htmlFor="tags" value="Add Tags" />
+                    {
+                        console.log('taglist is here',tagList)
+                    }
                     <MultipleTagsInput id="tags" tagList={tagList} updateTagList={updateTagList}  />
                 </div>
 

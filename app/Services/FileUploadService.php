@@ -21,9 +21,8 @@ class FileUploadService{
             $uploadedFile['image_url'] = cloudinary()->upload($file->getRealPath())->getSecurePath();
             $uploadedFile['public_id'] = cloudinary()->upload($file->getRealPath())->getPublicId();
         }
-        dd($uploadedFile);
+        // dd($uploadedFile);
         return $uploadedFile;
-      
     }
 
 }

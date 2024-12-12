@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\Container;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\Media;
 
 
 
@@ -15,6 +16,7 @@ class ModelService extends Service
 	protected User $userService;
 	protected Post $postService;
 	protected Tag $tagService;
+	protected Media $mediaService;
 
     public function __construct(Container $container)
 	{
@@ -22,6 +24,7 @@ class ModelService extends Service
 		$this->userService = $container->make(User::class);
 		$this->postService = $container->make(Post::class);
 		$this->tagService = $container->make(Tag::class);
+		$this->mediaService = $container->make(Media::class);
 
     }
 
@@ -39,4 +42,10 @@ class ModelService extends Service
 	{
 		return $this->tagService;
 	}
+
+	public function mediaService()
+	{
+		return $this->mediaService;
+	}
+
 }

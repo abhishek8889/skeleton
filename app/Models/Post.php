@@ -40,6 +40,11 @@ class Post extends Model
             if(!empty($request['tag_id']) && count($request['tag_id']) > 0){
                 $data->tags()->attach($request['tag_id']);
             }
+
+            if(isset($request['media_list_id']) && is_array($request['media_list_id'] )){
+                $data->media()->attach($request['media_list_id']);
+            }
+
             return $data;
         });
         return $data;
@@ -70,6 +75,11 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function media()
+    {
+        return $this->belongsToMany(Media::class, 'post_media', 'post_id', 'media_id');
     }
 
 

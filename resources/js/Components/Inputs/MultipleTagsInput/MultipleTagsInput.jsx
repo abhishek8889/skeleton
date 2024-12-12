@@ -4,12 +4,16 @@ const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
+    console.log('from component');
+    console.log(tagList)
+
+
     const handleKeyDown = (event) => {
 
         if (event.key === 'Enter' && inputValue.trim()) {
             const newTag = inputValue.trim();
             if (!tags.includes(newTag)) {
-                const updatedTags = [...tags, newTag];
+                const updatedTags = [...tags, newTag ];
                 setTags(updatedTags);
                 updateTagList(updatedTags); // Send updated tags to parent
             }
