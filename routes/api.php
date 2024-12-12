@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PostController;
 
 
 /*
@@ -18,3 +19,13 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+// Route::get('/posts', [PostController::class, 'list']);
+// Route::get('/posts/detail/{id}', [PostController::class, 'postDetail']);
+
+Route::prefix('v1')->group(function(){
+    Route::prefix('posts')->controller(PostController::class)->group(function(){
+        Route::get('/', 'list');
+        Route::get('/detail/{id}', 'postDetail');
+    });
+});
