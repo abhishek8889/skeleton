@@ -87,15 +87,12 @@ class PostController extends Controller
     }
 
     public function update(Request $request , $postId){
-        // dd($postId);
         $categories = Category::get();
         $postDetail = $this->postService->getDetail($postId);
-        // dd($postDetail);
-
         return Inertia::render('Posts/Index',[
             'type' => 'edit',
             'categories' => $categories,
-            'postDetail' => $postDetail
+            'postDetail' => $postDetail,
         ]);
     }
 

@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Admin\CategoryController;
 // use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\AppSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::post('posts/store',[PostController::class ,'store'])->name('posts.store'); 
     Route::post('posts/remove/{id}',[PostController::class ,'delete'])->name('posts.remove'); 
     Route::get('posts/update/{id}',[PostController::class ,'update'])->name('posts.update'); 
+
+    // :::::::::: App Settings ::::::::::
     
+    Route::prefix('settings')->controller(AppSettingsController::class)->group(function(){
+        Route::get('/','index')->name('settings.index');
+    });
 });
 
 Route::middleware('auth')->group(function () {

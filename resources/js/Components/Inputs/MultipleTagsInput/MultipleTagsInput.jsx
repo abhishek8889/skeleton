@@ -1,12 +1,15 @@
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 
 const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
+
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
-    console.log('from component');
-    console.log(tagList)
-
+    useEffect(() => {
+        if (tagList && tagList.length > 0) {
+            setTags(tagList);
+        }
+    }, [tagList]);
 
     const handleKeyDown = (event) => {
 
@@ -42,6 +45,7 @@ const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                 />
+
                 {tags.map((tag, index) => (
                     <div key={index} style={styles.tag}>
                         {tag}

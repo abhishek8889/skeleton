@@ -49,6 +49,9 @@ export default function Index({ auth, mustVerifyEmail, status, type, parent_cate
 
                 </div>
             </div>
+
+
+            
         </AuthenticatedLayout>
     );
 }

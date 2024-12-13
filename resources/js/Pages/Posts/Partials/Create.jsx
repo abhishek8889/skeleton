@@ -33,12 +33,8 @@ import {
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 
-
-
-// import NewForm from '@/Components/NewForm';
-export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,type='' }) {
-    // console.log(postDetail)
-    // console.log(type)
+export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,type='' , tags=[] }) {
+ 
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
     const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
@@ -59,18 +55,18 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
         'meta_tags' : metaTags || [],
     });
 
-    // console.log(postDetail.post_meta.meta_tags);
     useEffect(() => {
         if (type === 'edit') {
-            // console.log(postDetail.tags);
-            setMetaTags(postDetail.post_meta.meta_tags);
+            // console.log(postDetail);
             setData('meta_tags', postDetail.post_meta.meta_tags);
             updateMetaTags(postDetail.post_meta.meta_tags);
-            updateTagList(['one','two']);
-
+            setTagList(
+                postDetail.tags.map((tag, index) => (tag.name))
+            );
         }
     }, [type ,postDetail]);
 
+    // console.log(tagList)
 
     const updateTagList = (newTags) => {
         setTagList(newTags);
@@ -78,9 +74,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
     };
 
     const updateMetaTags = (newTags) => {
-        console.log('new tags');
-        console.log(newTags);
-        
         setMetaTags(newTags);
         setData('meta_tags', newTags); // Update form data with new meta tags
     };
@@ -95,7 +88,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
     };
 
 
-    // console.log(`Tag list => ${tagList}`);
 
     const createPost = (e) => {
         e.preventDefault();
@@ -154,6 +146,7 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
                 </div>
 
                 <div>
+                    
                     <InputLabel htmlFor="category_id" value="Category" />
                     <SelectBox
                         id="category_id"
@@ -228,9 +221,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
                 <div>
                     <InputLabel htmlFor="tags" value="Add Tags" />
-                    {
-                        console.log('taglist is here',tagList)
-                    }
                     <MultipleTagsInput id="tags" tagList={tagList} updateTagList={updateTagList}  />
                 </div>
 
@@ -262,9 +252,6 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
                     />
                     <InputError message={errors.image} className="mt-2" />
                 </div>
-
-
-
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>

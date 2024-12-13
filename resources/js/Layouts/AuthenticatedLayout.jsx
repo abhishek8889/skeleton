@@ -43,7 +43,7 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('posts')} active={route().current('posts') ? route().current('posts') : false}>
                                     Posts
                                 </NavLink>
-                                <NavLink href={route('posts')} active={route().current('posts') ? route().current('posts') : false}>
+                                <NavLink href={route('settings.index')} active={route().current('settings.index') ? route().current('settings.index') : false}>
                                     App Settings
                                 </NavLink>
                             </div>
