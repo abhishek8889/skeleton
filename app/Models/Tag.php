@@ -25,11 +25,15 @@ class Tag extends Model
     public static function storeAndReturnId($tagName){
      
         $data = DB::transaction(function () use ($tagName) {
-     
-            $data = self::create([
-                'name' => $tagName,
-                'slug' => Helper::generateSlug($tagName)
-            ]);
+            $tagExist = self::where('name',$tagName)->first();
+            if(!$tagExist){
+                $data = self::create([
+                    'name' => $tagName,
+                    'slug' => Helper::generateSlug($tagName)
+                ]);
+            }else{
+                $data = $tagExist;
+            }
             return $data->id;
         });
         return $data;

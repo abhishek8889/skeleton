@@ -74,7 +74,6 @@ class PostController extends Controller
             $request['tag_id'] = $tag_list;
             $post = $this->postService->store($request->all());
             
-            
         // }catch(Exception $e){
         //     // return redirect()->back()->with('error' , $e->getMessage());
         // }
@@ -86,7 +85,7 @@ class PostController extends Controller
         }
     }
 
-    public function update(Request $request , $postId){
+    public function edit(Request $request , $postId){
         $categories = Category::get();
         $postDetail = $this->postService->getDetail($postId);
         return Inertia::render('Posts/Index',[
@@ -95,5 +94,10 @@ class PostController extends Controller
             'postDetail' => $postDetail,
         ]);
     }
+
+    public function update(Request $request){
+        dd($request->all());
+    }
+
 
 }

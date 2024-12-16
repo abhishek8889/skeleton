@@ -7,6 +7,7 @@ import SelectBox from '@/Components/SelectBox';
 import FileInput from '@/Components/FileInput';
 import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
+import axios from 'axios';
 
 import toastr from 'toastr';
 import MultipleTagsInput from '@/Components/Inputs/MultipleTagsInput/MultipleTagsInput';
@@ -37,13 +38,18 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
  
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
+   
     const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
+    const [submitUrl , setSubmitUrl] = useState((type === 'edit') ? route('posts.update') : route('posts.store'));
+   
+
     const [editorData , setEditorData] = useState({
         content : '',
         excerpt : ''
     });
 
     const { data, setData, errors, post, reset, processing, recentlySuccessful  } = useForm({
+        'id' : (type=='edit') ? postDetail.id : '',
         'title' : (type=='edit') ? postDetail.title : '',
         'short_name' : (type=='edit') ? postDetail.short_name : '',
         'category_id' : (type=='edit') ? postDetail.category_id : '',
@@ -51,22 +57,23 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
         'excerpt' : (type =='edit')?postDetail.excerpt : '',
         'content' : (type =='edit')?postDetail.post_meta.content :'' ,
         'image' : '',
-        'tags' : tagList || [],
+        'tags' : (type =='edit')?postDetail.tags :tagList,
         'meta_tags' : metaTags || [],
     });
 
+
     useEffect(() => {
         if (type === 'edit') {
-            // console.log(postDetail);
             setData('meta_tags', postDetail.post_meta.meta_tags);
             updateMetaTags(postDetail.post_meta.meta_tags);
             setTagList(
                 postDetail.tags.map((tag, index) => (tag.name))
             );
         }
+
     }, [type ,postDetail]);
 
-    // console.log(tagList)
+
 
     const updateTagList = (newTags) => {
         setTagList(newTags);
@@ -92,7 +99,7 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
     const createPost = (e) => {
         e.preventDefault();
 
-        post(route('posts.store'), {
+        post(submitUrl, {
             preserveScroll: true,
             onSuccess: (response) => {
 
@@ -111,6 +118,22 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
             },
         });
     };
+
+    // const handleSearchTags = (searchVal) => {
+    //     axios.post(route('tags.search'), {
+    //         search: searchVal
+    //     })
+    //     .then(function (response) {
+    //         if(response.data.length > 0 && response.status == 200){
+    //             setTagModal(response.data);
+    //             setTagDialogOpen(true);
+    //         }
+    //     })
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
+    // }
+
 
     return (
         <section className={className}>
@@ -148,14 +171,16 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
                 <div>
                     
                     <InputLabel htmlFor="category_id" value="Category" />
+                    
                     <SelectBox
                         id="category_id"
-                        value={data.categories}
+                        value={data.category_id}
                         onChange={(e) => setData('category_id', e.target.value)}
                         className="mt-1 block w-full"
                         autoComplete="category_id"
                         options={categories}
                     />
+
                     <InputError message={errors.category_id} className="mt-2" />
                 </div>
 
@@ -221,7 +246,17 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
                 <div>
                     <InputLabel htmlFor="tags" value="Add Tags" />
-                    <MultipleTagsInput id="tags" tagList={tagList} updateTagList={updateTagList}  />
+                    <MultipleTagsInput 
+                        id="tags"  
+                        enableSearch={true}
+                        searchParam={
+                            {
+                                route:route('tags.search')
+                            }
+                        } 
+                        tagList={tagList} 
+                        updateTagList={updateTagList} 
+                    />
                 </div>
 
                 <div>

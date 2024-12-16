@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 // use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\AppSettingsController;
+use App\Http\Controllers\Admin\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,14 @@ Route::middleware(['auth', 'verified'])->group(function (){
     Route::get('posts/create',[PostController::class ,'create'])->name('posts.create'); 
     Route::post('posts/store',[PostController::class ,'store'])->name('posts.store'); 
     Route::post('posts/remove/{id}',[PostController::class ,'delete'])->name('posts.remove'); 
-    Route::get('posts/update/{id}',[PostController::class ,'update'])->name('posts.update'); 
+    Route::get('posts/edit/{id}',[PostController::class ,'edit'])->name('posts.edit'); 
+    Route::post('posts/update',[PostController::class ,'update'])->name('posts.update'); 
+
+    // :::::::::::::: Tag Controller ::::::::::::::
+    
+    Route::prefix('tags')->controller(TagController::class)->group(function(){
+        Route::post('search','searchTag')->name('tags.search'); 
+    });
 
     // :::::::::: App Settings ::::::::::
     

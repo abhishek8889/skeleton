@@ -77,7 +77,7 @@ export default function Index({ auth, mustVerifyEmail, status, type='' ,categori
                             type === "list" ?
                                 <Table 
                                     posts={posts}
-                                    editRoute={(id) => route('posts.update',{id})} 
+                                    editRoute={(id) => route('posts.edit',{id})} 
                                     deleteRoute={(id) => route('posts.remove',{id})} 
                                     tagHeader={tagHeader}
                                 />

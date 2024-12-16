@@ -1,9 +1,14 @@
 import { React, useEffect, useState } from 'react';
 
-const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
+const MultipleTagsInput = ({tagList, updateTagList,searchParam,enableSearch=false ,...props }) => {
 
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
+
+    const [tagDialogList,setTagDialogList] = useState([]);
+    const [isTagDialogOpen, setTagDialogOpen] = useState(false); // Control dialog visibility
+
+
 
     useEffect(() => {
         if (tagList && tagList.length > 0) {
@@ -11,8 +16,36 @@ const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
         }
     }, [tagList]);
 
-    const handleKeyDown = (event) => {
+    useEffect(() => {
+        if(isTagDialogOpen == true){
 
+        }
+    }, [tagDialogList,isTagDialogOpen]); 
+
+    const handleSearchTags = (searchVal) => {
+        setTagDialogList([]);
+        setTagDialogOpen(false);    
+        if(searchVal != '' && searchVal != undefined ){
+            axios.post(searchParam.route, {
+                search: searchVal
+            })
+            .then(function (response) {
+                if(response.data.data.length > 0 && response.data.success == true){
+                    setTagDialogList(response.data.data);
+                    setTagDialogOpen(true);
+                }else{
+                    setTagDialogList([]);
+                    setTagDialogOpen(false);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    }
+
+
+    const handleKeyDown = (event) => {
         if (event.key === 'Enter' && inputValue.trim()) {
             const newTag = inputValue.trim();
             if (!tags.includes(newTag)) {
@@ -24,6 +57,15 @@ const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
             event.preventDefault(); // Prevent form submission if using Enter
         }
     };
+
+    const handleAddTag = (tag) => {
+        const updatedTags = [...tags, tag.name ];
+        setTags(updatedTags);
+        updateTagList(updatedTags); 
+        setTagDialogList([]); // Clear the list
+        setTagDialogOpen(false); // Close the dialog
+        setInputValue('');
+    }
 
 
     const handleRemoveTag = (tagToRemove) => {
@@ -42,7 +84,12 @@ const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
                     type="text"
                     placeholder="Add a tag and press Enter"
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={(e) => {
+                        setInputValue(e.target.value);
+                        if(enableSearch == true){
+                            handleSearchTags(e.target.value);
+                        }
+                    }}
                     onKeyDown={handleKeyDown}
                 />
 
@@ -55,6 +102,24 @@ const MultipleTagsInput = ({tagList, updateTagList,...props }) => {
                     </div>
                 ))}
             </div>
+
+            {isTagDialogOpen && (
+                <div className="dialog-overlay">
+                    <div className="dialog-box">
+                        <h5>Select a Tag</h5>
+                        {tagDialogList.map((tag) => (
+                            <div
+                                key={tag.id}
+                                className="tag-item"
+                                onClick={() => handleAddTag(tag)} // Add tag on click
+                                style={{ cursor: "pointer", padding: '5px 10px', borderRadius: '5px', margin: '5px',border:'1px solid #ccc',hover:'#342121'}}
+                            >
+                            {tag.name}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -88,7 +153,7 @@ const styles = {
         outline: 'none',
         padding: '8px',
         fontSize: '14px',
-    },
+    }    
 };
 
 export default MultipleTagsInput;
