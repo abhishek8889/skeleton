@@ -13,7 +13,8 @@ class Media extends Model
 
     public function store($request){
         $data = DB::transaction(function() use ($request){
-            $data = self::create([
+            $data = self::create(
+                [
                 'name' => $request['name'] ?? NULL,
                 'url' => $request['url'] ?? NULL,
                 'type' => $request['file_type'] ?? NULL,
@@ -22,7 +23,30 @@ class Media extends Model
                 'mime_type' => $request['file_mime_type'] ?? NULL,
                 'cloud_provider' => $request['cloud_provider'] ?? NULL,
                 'unique_id' => $request['file_unique_id'] ?? NULL,
-            ]);
+                ]
+            );
+            return $data;
+        });
+        return $data;
+    }
+
+    public function put($request){
+        $data = DB::transaction(function() use ($request){
+            $data = self::updateOrCreate(
+                [
+                    'id' => $request['media_id'] ?? NULL
+                ],
+                [
+                    'name' => $request['name'] ?? NULL,
+                    'url' => $request['url'] ?? NULL,
+                    'type' => $request['file_type'] ?? NULL,
+                    'size' => $request['file_size'] ?? NULL,
+                    'extension' => $request['file_extension'] ?? NULL,
+                    'mime_type' => $request['file_mime_type'] ?? NULL,
+                    'cloud_provider' => $request['cloud_provider'] ?? NULL,
+                    'unique_id' => $request['file_unique_id'] ?? NULL,
+                ]
+            );
             return $data;
         });
         return $data;

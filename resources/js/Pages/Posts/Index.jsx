@@ -6,7 +6,7 @@ import { Head } from '@inertiajs/react';
 import LinkBox from '../../Components/LinkBox';
 import Table from '@/Components/Table/Table';
 
-export default function Index({ auth, mustVerifyEmail, status, type='' ,categories ,posts ,postDetail=[]}) {
+export default function Index({ auth, mustVerifyEmail, status, type='' ,categories ,posts ,postDetail=[] ,thumbnail=[]}) {
 
     const [show, setShow] = useState();
     const [tagHeader,setTagHeader] = useState([
@@ -69,10 +69,11 @@ export default function Index({ auth, mustVerifyEmail, status, type='' ,categori
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                         {type === "create"  || type === "edit" ?
                             <CreatePost
-                                className="max-w-xl"
+                                className=""
                                 categories={categories}
                                 postDetail={postDetail}
                                 type={type}
+                                thumbnail={thumbnail}
                             /> :
                             type === "list" ?
                                 <Table 

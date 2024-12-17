@@ -10,6 +10,8 @@ use App\Services\ModelService;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Media;
+use Illuminate\Support\Facades\Validator;
+
 
 use Exception;
 use App\Services\FileUploadService;
@@ -62,6 +64,7 @@ class PostController extends Controller
                 $request['file_type'] = 'IMAGE';
 
                 // ::::::::::: Save data in media table :::::::::::
+
                 $media = $this->mediaService->store($request->all());
                 $media_id = $media->id;
                 $request['media_list_id'] = array($media_id);
@@ -71,9 +74,10 @@ class PostController extends Controller
                     array_push($tag_list , $this->tagService->storeAndReturnId($tag));
                 }
             }
+
             $request['tag_id'] = $tag_list;
             $post = $this->postService->store($request->all());
-            
+            // return redirect
         // }catch(Exception $e){
         //     // return redirect()->back()->with('error' , $e->getMessage());
         // }
@@ -86,18 +90,73 @@ class PostController extends Controller
     }
 
     public function edit(Request $request , $postId){
+
+
         $categories = Category::get();
-        $postDetail = $this->postService->getDetail($postId);
+        $relations = ['postMetas','tags','media'];
+
+        $postDetail = $this->postService->getDetail($postId,$relations);
+
+        $thumbnail = $postDetail->thumbnail();
+
         return Inertia::render('Posts/Index',[
             'type' => 'edit',
             'categories' => $categories,
             'postDetail' => $postDetail,
+            'thumbnail' => $thumbnail
         ]);
     }
 
     public function update(Request $request){
-        dd($request->all());
+       try{
+
+        $rules = [
+            'title' => 'required',
+            'short_name' => 'required',
+            'category_id' => 'required',
+            'author' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $post = $this->postService->getDetail($request->id);
+     
+        $tag_list = [];
+
+        if($request->has('image')){
+            // Delete old image from cloudinary and update new one in db :::::::::::
+            $image = $request->file('image');
+            $deleteFile  = $this->fileUploadService->delete($post->thumbnail()->unique_id,'cloudinary');
+            $upload_url = $this->fileUploadService->upload($image,'images','cloudinary');
+
+            $request['url'] = $upload_url['image_url'];
+            $request['file_unique_id'] = $upload_url['public_id'];
+            $request['cloud_provider'] = 'CLOUDINARY';
+            $request['file_type'] = 'IMAGE';
+            $request['media_id'] = $post->thumbnail()->id ?? NULL;
+
+            // ::::::::::: Update image info in media table :::::::::::
+
+            $media = $this->mediaService->put($request->all()); 
+
+        }
+
+        if(!empty($request->tags) && is_array($request->tags)){
+            foreach($request->tags as $tag){
+                array_push($tag_list , $this->tagService->storeAndReturnId($tag));
+            }
+        }
+
+        $request['tag_id'] = $tag_list;
+
+        $post = $this->postService->put($request->all());
+        
+
+       }catch(Exception $e){
+            $this->sendError([], $e->getMessage());
+        }
     }
-
-
 }

@@ -24,6 +24,13 @@ class FileUploadService{
         // dd($uploadedFile);
         return $uploadedFile;
     }
+    public function delete($public_id ,$disk = 'local'){
+        if($disk == 'cloudinary'){
+            $result = cloudinary()->uploadApi()->destroy($public_id, $options = []);
+            dd($result);
+            return $result;
+        }
+    }
 
 }
 

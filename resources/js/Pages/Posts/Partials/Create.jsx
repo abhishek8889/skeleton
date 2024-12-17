@@ -33,15 +33,15 @@ import {
   SourceEditing
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
+import ImageBox from '@/Components/Image/ImageBox';
 
-export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,type='' , tags=[] }) {
- 
+export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,thumbnail=[] ,type='' , tags=[] }) {
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
    
     const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
     const [submitUrl , setSubmitUrl] = useState((type === 'edit') ? route('posts.update') : route('posts.store'));
-   
+    const [submittedButton , setSubmittedButton] = useState((type === 'edit') ? 'Update Post' : 'Create Post');
 
     const [editorData , setEditorData] = useState({
         content : '',
@@ -55,7 +55,7 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
         'category_id' : (type=='edit') ? postDetail.category_id : '',
         'author' : (type=='edit') ? postDetail.author : '',
         'excerpt' : (type =='edit')?postDetail.excerpt : '',
-        'content' : (type =='edit')?postDetail.post_meta.content :'' ,
+        'content' : (type =='edit')?postDetail.content :'' ,
         'image' : '',
         'tags' : (type =='edit')?postDetail.tags :tagList,
         'meta_tags' : metaTags || [],
@@ -64,8 +64,8 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
 
     useEffect(() => {
         if (type === 'edit') {
-            setData('meta_tags', postDetail.post_meta.meta_tags);
-            updateMetaTags(postDetail.post_meta.meta_tags);
+            setData('meta_tags', postDetail.meta_tags);
+            updateMetaTags(postDetail.meta_tags);
             setTagList(
                 postDetail.tags.map((tag, index) => (tag.name))
             );
@@ -142,163 +142,170 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
             </header>
 
             <form onSubmit={createPost} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="title" value="Post title" />
-                    <TextInput
-                        id="title"
-                        value={data.title}
-                        onChange={(e) => setData('title', e.target.value)}
-                        type="text"
-                        className="mt-1 block w-full"
-                        autoComplete="title"
-                    />
-                    <InputError message={errors.title} className="mt-2" />
-                </div>
+                <div className="row">
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="title" value="Post title" className='mb-2' />
+                        <TextInput
+                            id="title"
+                            value={data.title}
+                            onChange={(e) => setData('title', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="title"
+                        />
+                        <InputError message={errors.title} className="mt-2" />
+                    </div>
 
-                <div>
-                    <InputLabel htmlFor="short_name" value="Short Name" />
-                    <TextInput
-                        id="short_name"
-                        value={data.short_name}
-                        onChange={(e) => setData('short_name', e.target.value)}
-                        type="text"
-                        className="mt-1 block w-full"
-                        autoComplete="short_name"
-                    />
-                    <InputError message={errors.short_name} className="mt-2" />
-                </div>
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="short_name" value="Short Name" className='mb-2' />
+                        <TextInput
+                            id="short_name"
+                            value={data.short_name}
+                            onChange={(e) => setData('short_name', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="short_name"
+                        />
+                        <InputError message={errors.short_name} className="mt-2" />
+                    </div>
 
-                <div>
-                    
-                    <InputLabel htmlFor="category_id" value="Category" />
-                    
-                    <SelectBox
-                        id="category_id"
-                        value={data.category_id}
-                        onChange={(e) => setData('category_id', e.target.value)}
-                        className="mt-1 block w-full"
-                        autoComplete="category_id"
-                        options={categories}
-                    />
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="category_id" value="Category" className='mb-2' />
+                        <SelectBox
+                            id="category_id"
+                            value={data.category_id}
+                            onChange={(e) => setData('category_id', e.target.value)}
+                            className="mt-1 block w-full"
+                            autoComplete="category_id"
+                            options={categories}
+                        />
 
-                    <InputError message={errors.category_id} className="mt-2" />
-                </div>
+                        <InputError message={errors.category_id} className="mt-2" />
+                    </div>
 
-                <div>
-                    <InputLabel htmlFor="excerpt" value="Excerpt" />
+                    {/* Author */}
 
-                    <CKEditor
-                        editor={ ClassicEditor }
-                        config={ {
-                            toolbar: [
-                            'undo', 'redo', '|',
-                            'heading', '|', 'bold', 'italic', '|',
-                            'link', 'insertTable', 'mediaEmbed', '|',
-                            'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
-                            ],
-                            plugins: [
-                            Bold,
-                            Essentials,
-                            Heading,
-                            Indent,
-                            IndentBlock,
-                            Italic,
-                            Link,
-                            List,
-                            MediaEmbed,
-                            Paragraph,
-                            Table,
-                            Undo,
-                            CodeBlock,
-                            SourceEditing
-                            ],
-                        } }
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="author" value="Author" className='mb-2'/>
+                        <TextInput
+                            id="author"
+                            value={data.author}
+                            onChange={(e) => setData('author', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="author"
+                        />
+                        <InputError message={errors.author} className="mt-2" />
+                    </div>
 
-                        id="excerpt"
-                        data={type === 'edit' ? postDetail.excerpt : editorData.excerpt}
-                        onChange={(handleEditorChange('excerpt'))}
-                    />
-                    <InputError message={errors.excerpt} className="mt-2" />
-                </div>
+                    <div className="mb-3">
+                        <InputLabel htmlFor="excerpt" value="Excerpt"className='mb-2' />
 
-                <div>
-                    <InputLabel htmlFor="content" value="Content" />
+                        <CKEditor
+                            editor={ ClassicEditor }
+                            config={ {
+                                toolbar: [
+                                'undo', 'redo', '|',
+                                'heading', '|', 'bold', 'italic', '|',
+                                'link', 'insertTable', 'mediaEmbed', '|',
+                                'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
+                                ],
+                                plugins: [
+                                Bold,
+                                Essentials,
+                                Heading,
+                                Indent,
+                                IndentBlock,
+                                Italic,
+                                Link,
+                                List,
+                                MediaEmbed,
+                                Paragraph,
+                                Table,
+                                Undo,
+                                CodeBlock,
+                                SourceEditing
+                                ],
+                            } }
 
-                    <CKEditor
-                        editor={ ClassicEditor }
-                        config={ {
-                            toolbar: [
-                            'undo', 'redo', '|',
-                            'heading', '|', 'bold', 'italic', '|',
-                            'link', 'insertTable', 'mediaEmbed', '|',
-                            'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
-                            ],
-                            plugins: [Bold,Essentials,Heading,Indent,IndentBlock,Italic,Link,List,MediaEmbed,Paragraph,Table,Undo,CodeBlock,SourceEditing],
-                        } }
+                            id="excerpt"
+                            data={type === 'edit' ? postDetail.excerpt : editorData.excerpt}
+                            onChange={(handleEditorChange('excerpt'))}
+                        />
+                        <InputError message={errors.excerpt} className="mt-2" />
+                    </div>
 
-                        id="content"
-                        data={type === 'edit' ? postDetail.post_meta.content : editorData.content}
-                        onChange={(handleEditorChange('content'))}
-                    />
+                    <div className="mb-3">
+                        <InputLabel htmlFor="content" value="Content" className='mb-2'/>
 
-                    <InputError message={errors.content} className="mt-2" />
-                </div>
+                        <CKEditor
+                            editor={ ClassicEditor }
+                            config={ {
+                                toolbar: [
+                                'undo', 'redo', '|',
+                                'heading', '|', 'bold', 'italic', '|',
+                                'link', 'insertTable', 'mediaEmbed', '|',
+                                'bulletedList', 'numberedList', 'indent', 'outdent' ,'codeBlock','sourceEditing'
+                                ],
+                                plugins: [Bold,Essentials,Heading,Indent,IndentBlock,Italic,Link,List,MediaEmbed,Paragraph,Table,Undo,CodeBlock,SourceEditing],
+                            } }
 
-                <div>
-                    <InputLabel htmlFor="tags" value="Add Tags" />
-                    <MultipleTagsInput 
-                        id="tags"  
-                        enableSearch={true}
-                        searchParam={
-                            {
-                                route:route('tags.search')
-                            }
-                        } 
-                        tagList={tagList} 
-                        updateTagList={updateTagList} 
-                    />
-                </div>
+                            id="content"
+                            data={type === 'edit' ? postDetail.content : editorData.content}
+                            onChange={(handleEditorChange('content'))}
+                        />
 
-                <div>
-                    <InputLabel htmlFor="meta_tags" value="Add Meta Tags" />
-                    <MultipleTagsInput id="meta_tags" tagList={metaTags} updateTagList={updateMetaTags}  />
-                </div>
+                        <InputError message={errors.content} className="mt-2" />
+                    </div>
 
-                <div>
-                    <InputLabel htmlFor="author" value="Author" />
-                    <TextInput
-                        id="author"
-                        value={data.author}
-                        onChange={(e) => setData('author', e.target.value)}
-                        type="text"
-                        className="mt-1 block w-full"
-                        autoComplete="author"
-                    />
-                    <InputError message={errors.author} className="mt-2" />
-                </div>
+                    <div className="mb-3">
+                        <InputLabel htmlFor="tags" value="Add Tags" className='mb-2'/>
+                        <MultipleTagsInput 
+                            id="tags"  
+                            enableSearch={true}
+                            searchParam={
+                                {
+                                    route:route('tags.search')
+                                }
+                            } 
+                            tagList={tagList} 
+                            updateTagList={updateTagList} 
+                        />
+                    </div>
 
-                <div>
-                    <InputLabel htmlFor="image" value="Image" />
-                    <FileInput
-                        id="image"
-                        type="file"
-                        onChange={(e) => setData('image', e.target.files[0])}
-                        className="mt-1 block w-full"
-                    />
-                    <InputError message={errors.image} className="mt-2" />
-                </div>
+                    <div className="mb-3">
+                        <InputLabel htmlFor="meta_tags" value="Add Meta Tags" className='mb-2'/>
+                        <MultipleTagsInput id="meta_tags" tagList={metaTags} updateTagList={updateMetaTags}  />
+                    </div>
 
-                <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600">Saved.</p>
-                    </Transition>
+                   
+
+                    <div className="mb-3">
+                        <InputLabel htmlFor="image" value="Image" className='mb-2'/>
+                        <FileInput
+                            id="image"
+                            type="file"
+                            onChange={(e) => setData('image', e.target.files[0])}
+                            className="mt-1 block  mb-2"
+                        />
+                        { type == 'edit' &&
+                            <ImageBox src={thumbnail.url} boxClass="h-25 w-25" imgClass="img-thumbnail rounded" ></ImageBox>         
+                        }
+                        <InputError message={errors.image} className="mt-2" />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <PrimaryButton disabled={processing}>{submittedButton}</PrimaryButton>
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-in-out"
+                            enterFrom="opacity-0"
+                            leave="transition ease-in-out"
+                            leaveTo="opacity-0"
+                        >
+                            <p className="text-sm text-gray-600">Saved.</p>
+                        </Transition>
+                    </div>
                 </div>
             </form>
         </section>

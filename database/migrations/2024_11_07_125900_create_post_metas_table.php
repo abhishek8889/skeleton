@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('post_metas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
-            $table->text('meta_tags')->nullable();
-            $table->text('content')->nullable();
+            $table->text('meta_key');
+            $table->longText('meta_value')->nullable();
             $table->timestamps();
         });
     }
