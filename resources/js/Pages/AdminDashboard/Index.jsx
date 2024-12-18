@@ -1,6 +1,5 @@
 import { React, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-// import DeleteUserForm from './Partials/DeleteUserForm';
 import CreatePost from './Partials/Create';
 import { Head } from '@inertiajs/react';
 import LinkBox from '../../Components/LinkBox';

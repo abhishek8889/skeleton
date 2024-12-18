@@ -93,6 +93,9 @@ const MultipleTagsInput = ({tagList, updateTagList,searchParam,enableSearch=fals
                     onKeyDown={handleKeyDown}
                 />
 
+                {/* {
+                    console.log(tags)
+                } */}
                 {tags.map((tag, index) => (
                     <div key={index} style={styles.tag}>
                         {tag}

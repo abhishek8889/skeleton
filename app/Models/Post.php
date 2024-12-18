@@ -15,7 +15,7 @@ class Post extends Model
 {
     use HasFactory;
     protected $fillable = ['title','slug','short_name','category_id','author','image_name','excerpt','status','type_id'];
-    protected $appends = ['content','meta_tags'];
+    protected $appends = ['content','meta_tags','thumbnail'];
 
     public static function store($request){
         // dd($request['meta_tags']);
@@ -100,27 +100,18 @@ class Post extends Model
             
             // :::::::::::::::::: Adding data in post meta table ::::::::::::::::::
 
-            $postMetaData = array();
-            $defaultData = array(
-                'post_id' => $data->id,
-                'meta_key' => '',
-                'meta_value' => '',
-                'created_at' => now(),
-                'updated_at' => now(),
-            );
-
             if(!empty($request['content'])){ 
                 $data->content = $request['content'];
             }
             if( !empty($request['meta_tags'])){
-                $data->content = json_encode($request['content']);
+                $data->meta_tags = $request['meta_tags'];
             }
             if(!empty($request['media_list_id']) && is_array(($request['media_list_id']))){
                 $data->thumbnail = $request['media_list_id'][0];
             }
           
             // :::::::::::::::::: End ::::::::::::::::::
-
+            
             // :::::::::::: Attach tag with posts ::::::::::::
             if(!empty($request['tag_id']) && count($request['tag_id']) > 0){
                 $data->tags()->sync($request['tag_id']);
@@ -148,6 +139,13 @@ class Post extends Model
     public static function getDetail($id,$relations = []){
         $data = DB::transaction(function () use ($id , $relations) {
             return self::with($relations)->find($id);
+        });
+        return $data;
+    }
+
+    public static function list($relations =[]){
+        $data = DB::transaction(function () use ($relations) {
+            return self::with($relations)->get();
         });
         return $data;
     }
@@ -215,6 +213,15 @@ class Post extends Model
     public function getMetaTagsAttribute(){
         $metaTags = $this->postMetas()->where('meta_key','meta_tags')->value('meta_value');
         return $metaTags ? json_decode($metaTags) : null;
+    }
+    public function getThumbnailAttribute(){
+        $thumbnail_media_id = $this->postMetas()->where('meta_key','thumbnail')->value('meta_value');
+        if($thumbnail_media_id){
+            $media = Media::find($thumbnail_media_id);
+            return $media ? $media->url : null;
+        }else{
+            return null;
+        }
     }
 
 }

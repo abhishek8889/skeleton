@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Cloudinary\Laravel\Facades\Cloudinary;
 use Cloudinary\Api\Upload\UploadApi;
+
 class FileUploadService{
 
     /**
@@ -26,8 +27,7 @@ class FileUploadService{
     }
     public function delete($public_id ,$disk = 'local'){
         if($disk == 'cloudinary'){
-            $result = cloudinary()->uploadApi()->destroy($public_id, $options = []);
-            dd($result);
+            $result = cloudinary()->destroy($public_id);
             return $result;
         }
     }

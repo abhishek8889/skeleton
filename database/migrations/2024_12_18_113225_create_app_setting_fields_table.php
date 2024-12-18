@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('app_settings', function (Blueprint $table) {
+        Schema::create('app_setting_fields', function (Blueprint $table) {
             $table->id();
             $table->string('name')->index();
-            $table->string('key')->unique()->index();
-            $table->text('value')->nullable();
-            $table->string('type')->default('text'); // text, image, file, select, radio, checkbox
-            $table->tinyInteger('status')->default(0);
+            $table->string('slug')->index();
+            $table->string('type')->index();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('app_settings');
+        Schema::dropIfExists('app_setting_fields');
     }
 };

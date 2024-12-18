@@ -29,4 +29,11 @@ class AppSettingsController extends Controller
             'posts' => $posts
         ]);
     }
+
+
+    public function settingFields(Request $request){
+        return Inertia::render('AppSetting/SettingFields/Index',[
+            
+        ]);
+    }
 }

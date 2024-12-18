@@ -33,7 +33,8 @@ class PostController extends Controller
     }
 
     public function index(Request $request){
-        $posts = Post::get();
+        // $relations = [''];
+        $posts = $this->postService->list();
         return Inertia::render('Posts/Index',[
             'type' => 'list',
             'posts' => $posts
@@ -50,11 +51,26 @@ class PostController extends Controller
     }
 
     public function store(Request $request){
-        // try{
-            // dd($request->all());
+        try{
+            $rules = [
+                'title' => 'required',
+                'short_name' => 'required',
+                'content' => 'required',
+                'author' => 'required',
+                'category_id' => 'required',
+                'content' => 'required',
+            ];
+            $message = [
+                'category_id.required' => 'The category field is required.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules,$message);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $tag_list = [];
-            if($request->has('image')){
+            if($request->has('image') && $request->image != null){
                 $image = $request->file('image');
                 $upload_url = $this->fileUploadService->upload($image,'images','cloudinary');
 
@@ -77,10 +93,10 @@ class PostController extends Controller
 
             $request['tag_id'] = $tag_list;
             $post = $this->postService->store($request->all());
-            // return redirect
-        // }catch(Exception $e){
-        //     // return redirect()->back()->with('error' , $e->getMessage());
-        // }
+            return redirect()->back()->with('success', 'Post created successfully !');
+        }catch(Exception $e){
+            return redirect()->back()->with('error' , $e->getMessage());
+        }
     }
 
     public function delete($postId){
@@ -98,6 +114,7 @@ class PostController extends Controller
         $postDetail = $this->postService->getDetail($postId,$relations);
 
         $thumbnail = $postDetail->thumbnail();
+        // dd($postDetail);
 
         return Inertia::render('Posts/Index',[
             'type' => 'edit',
@@ -108,55 +125,56 @@ class PostController extends Controller
     }
 
     public function update(Request $request){
-       try{
+        try{
+            $rules = [
+                'title' => 'required',
+                'short_name' => 'required',
+                'category_id' => 'required',
+                'author' => 'required',
+            ];
+            $validator = Validator::make($request->all(), $rules);
 
-        $rules = [
-            'title' => 'required',
-            'short_name' => 'required',
-            'category_id' => 'required',
-            'author' => 'required',
-        ];
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $post = $this->postService->getDetail($request->id);
-     
-        $tag_list = [];
-
-        if($request->has('image')){
-            // Delete old image from cloudinary and update new one in db :::::::::::
-            $image = $request->file('image');
-            $deleteFile  = $this->fileUploadService->delete($post->thumbnail()->unique_id,'cloudinary');
-            $upload_url = $this->fileUploadService->upload($image,'images','cloudinary');
-
-            $request['url'] = $upload_url['image_url'];
-            $request['file_unique_id'] = $upload_url['public_id'];
-            $request['cloud_provider'] = 'CLOUDINARY';
-            $request['file_type'] = 'IMAGE';
-            $request['media_id'] = $post->thumbnail()->id ?? NULL;
-
-            // ::::::::::: Update image info in media table :::::::::::
-
-            $media = $this->mediaService->put($request->all()); 
-
-        }
-
-        if(!empty($request->tags) && is_array($request->tags)){
-            foreach($request->tags as $tag){
-                array_push($tag_list , $this->tagService->storeAndReturnId($tag));
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
             }
-        }
 
-        $request['tag_id'] = $tag_list;
 
-        $post = $this->postService->put($request->all());
+            $post = $this->postService->getDetail($request->id);
         
+            $tag_list = [];
+            if($request->has('image') && $request->image != null){
+                // Delete old image from cloudinary and update new one in db :::::::::::
+                $image = $request->file('image');
 
-       }catch(Exception $e){
-            $this->sendError([], $e->getMessage());
+                $deleteFile  = $this->fileUploadService->delete($post->thumbnail()->unique_id,'cloudinary');
+                $upload_url = $this->fileUploadService->upload($image,'images','cloudinary');
+
+                $request['url'] = $upload_url['image_url'];
+                $request['file_unique_id'] = $upload_url['public_id'];
+                $request['cloud_provider'] = 'CLOUDINARY';
+                $request['file_type'] = 'IMAGE';
+                $request['media_id'] = $post->thumbnail()->id ?? NULL;
+
+                // ::::::::::: Update image info in media table :::::::::::
+
+                $media = $this->mediaService->put($request->all()); 
+            }
+
+            if(!empty($request->tags) && is_array($request->tags)){
+                foreach($request->tags as $tag){
+                    if(!isset($tag['id'])){
+                        array_push($tag_list , $this->tagService->storeAndReturnId($tag));
+                    }
+                }
+            }
+
+            $request['tag_id'] = $tag_list;
+            $post = $this->postService->put($request->all());
+
+            return redirect()->back()->with('success', 'Post updated successfully !');
+
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 }

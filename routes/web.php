@@ -57,6 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function (){
     
     Route::prefix('settings')->controller(AppSettingsController::class)->group(function(){
         Route::get('/','index')->name('settings.index');
+        Route::get('/fields','settingFields')->name('settings.fields');
+        
     });
 });
 
