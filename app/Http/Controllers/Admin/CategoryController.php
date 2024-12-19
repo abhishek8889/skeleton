@@ -43,18 +43,19 @@ class CategoryController extends Controller
         }
         if($request->hasFile('cat_image')){
             $file = $request->file('cat_image');
-            $fileUpload = $this->fileUploadService->upload($file, 'category_image','public');
+            $fileUpload = $this->fileUploadService->upload($file, 'images','cloudinary');
             if(!isset($fileUpload['file_name'])){
                 return response()->json(['message' => 'Please try again.'],400);
             }
         }
-
+        
         $category = Category::create([
             'name' => $request->name,
             'parent_id' => !empty($request->parent_id)?$request->parent_id:NULL,
             'category_image' => !empty($fileUpload['directory_path'])?$fileUpload['directory_path']:NULL,
             'status' => 1
         ]);
+
         return to_route('categories.add');
     }
 
@@ -64,6 +65,6 @@ class CategoryController extends Controller
         return Inertia::render('Categories/Index',[
             'type' => 'update',
             'parent_category' => $parent_category
-        ]); 
+        ]);
     }
 }

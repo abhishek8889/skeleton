@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\ModelService;
 use App\Models\Post;
+use App\Http\Resources\Posts\PostResource;
 
 
 class PostController extends Controller
@@ -17,8 +18,9 @@ class PostController extends Controller
     }
     public function list(Request $request){
         try{
-            $posts = $this->postService->with('media')->get();
-        
+            $relations = ['tags'];
+            $posts = $this->postService->list($relations);
+            // return PostResource::collection($posts);
             return $this->sendResponse($posts, 'Post list fetched successfully');
 
         }catch(\Exception $e){
