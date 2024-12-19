@@ -30,6 +30,9 @@ class AppSettingsController extends Controller
         ]);
     }
 
+    public function store(Request $request){
+        dd($request->all());
+    }
 
     public function settingFields(Request $request){
         return Inertia::render('AppSetting/SettingFields/Index',[
