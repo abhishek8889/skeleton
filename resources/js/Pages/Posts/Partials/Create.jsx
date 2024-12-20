@@ -35,13 +35,14 @@ import {
 import 'ckeditor5/ckeditor5.css';
 import ImageBox from '@/Components/Image/ImageBox';
 
-export default function CreatePost({ className = '' ,categories=[] , postDetail=[] ,thumbnail=[] ,type='' , tags=[] }) {
+export default function CreatePost({ className = '' ,post_type=[],categories=[] , postDetail=[] ,thumbnail=[] ,type='' , tags=[] }) {
     const [tagList, setTagList] = useState([]);
     const [metaTags, setMetaTags] = useState([]);
    
     const [pageTile , setPageTitle] = useState((type === 'edit') ? 'Edit Post' : 'Create Post');
     const [submitUrl , setSubmitUrl] = useState((type === 'edit') ? route('posts.update') : route('posts.store'));
     const [submittedButton , setSubmittedButton] = useState((type === 'edit') ? 'Update Post' : 'Create Post');
+
 
     const [editorData , setEditorData] = useState({
         content : '',
@@ -59,8 +60,12 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
         'image' : '',
         'tags' : (type =='edit')?postDetail.tags :tagList,
         'meta_tags' : metaTags || [],
+        'type_id' : (type=='edit') ? postDetail.type_id : '',
+        'fb_link' : (type=='edit') ? postDetail.fb_link : '',
+        'insta_link' : (type=='edit') ? postDetail.insta_link : '',
+        'twitter_link' : (type=='edit') ? postDetail.twitter_link : '',
+        'email_link' : (type=='edit') ? postDetail.email_link : '',
     });
-
 
     useEffect(() => {
         if (type === 'edit') {
@@ -278,9 +283,23 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
                         <MultipleTagsInput id="meta_tags" tagList={metaTags} updateTagList={updateMetaTags}  />
                     </div>
 
-                   
+                   {/* Post type */}
+                    <div className="col-md-6 mb-3">
+                        {/* {console.log(post_type)} */}
+                        <InputLabel htmlFor="post_type" value="Select Post Type" className='mb-2' />
+                        <SelectBox
+                            id="post_type"
+                            value={data.type_id}
+                            onChange={(e) => setData('type_id', e.target.value)}
+                            className="mt-1 block w-full"
+                            autoComplete="type_id"
+                            options={post_type}
+                        />
 
-                    <div className="mb-3">
+                        <InputError message={errors.category_id} className="mt-2" />
+                    </div>
+
+                    <div className="col-md-6 mb-3">
                         <InputLabel htmlFor="image" value="Image" className='mb-2'/>
                         <FileInput
                             id="image"
@@ -293,6 +312,58 @@ export default function CreatePost({ className = '' ,categories=[] , postDetail=
                         }
                         <InputError message={errors.image} className="mt-2" />
                     </div>
+                    {/* Social Links */}
+
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="fb_link" value="Facebook Link" className='mb-2' />
+                        <TextInput
+                            id="fb_link"
+                            value={data.fb_link}
+                            onChange={(e) => setData('fb_link', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="fb_link"
+                        />
+                        <InputError message={errors.fb_link} className="mt-2" />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="insta_link" value="Instagram Link" className='mb-2' />
+                        <TextInput
+                            id="insta_link"
+                            value={data.insta_link}
+                            onChange={(e) => setData('insta_link', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="insta_link"
+                        />
+                        <InputError message={errors.insta_link} className="mt-2" />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="twitter_link" value="Twitter Link" className='mb-2' />
+                        <TextInput
+                            id="twitter_link"
+                            value={data.twitter_link}
+                            onChange={(e) => setData('twitter_link', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="twitter_link"
+                        />
+                        <InputError message={errors.twitter_link} className="mt-2" />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                        <InputLabel htmlFor="email_link" value="Email Link" className='mb-2' />
+                        <TextInput
+                            id="email_link"
+                            value={data.email_link}
+                            onChange={(e) => setData('email_link', e.target.value)}
+                            type="text"
+                            className="mt-1 block w-full"
+                            autoComplete="email_link"
+                        />
+                        <InputError message={errors.email_link} className="mt-2" />
+                    </div>
+
+                    {/*  */}
 
                     <div className="flex items-center gap-4">
                         <PrimaryButton disabled={processing}>{submittedButton}</PrimaryButton>

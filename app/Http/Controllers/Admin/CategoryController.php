@@ -6,18 +6,29 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Category;
+use App\Models\Media;
 use App\Services\FileUploadService;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ModelService;
+
 class CategoryController extends Controller
 {
+    protected Category $categoryService;
+    protected Media $mediaService;
     protected $fileUploadService;
-    public function __construct(FileUploadService $fileUploadService){
+
+    public function __construct(ModelService $modelService ,FileUploadService $fileUploadService){
         $this->fileUploadService = $fileUploadService;
+        $this->categoryService = $modelService->categoryService();
+        $this->mediaService = $modelService->mediaService();
+
     }
     public function index(Request $request){
 
+        $categories = $this->categoryService->all();
         return Inertia::render('Categories/Index',[
-            'type' => 'list'
+            'type' => 'list',
+            'categories' => $categories
         ]);
     }
 
@@ -31,32 +42,42 @@ class CategoryController extends Controller
     }
 
     public function store(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|unique:categories|max:255',
+            ]);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:categories|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('category/add')
-                        ->withErrors($validator)
-                        ->withInput();
-        }
-        if($request->hasFile('cat_image')){
-            $file = $request->file('cat_image');
-            $fileUpload = $this->fileUploadService->upload($file, 'images','cloudinary');
-            if(!isset($fileUpload['file_name'])){
-                return response()->json(['message' => 'Please try again.'],400);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
             }
-        }
-        
-        $category = Category::create([
-            'name' => $request->name,
-            'parent_id' => !empty($request->parent_id)?$request->parent_id:NULL,
-            'category_image' => !empty($fileUpload['directory_path'])?$fileUpload['directory_path']:NULL,
-            'status' => 1
-        ]);
 
-        return to_route('categories.add');
+            if($request->hasFile('cat_image') && $request->cat_image != null){
+                $image = $request->file('cat_image');
+                $upload_url = $this->fileUploadService->upload($image,'images','cloudinary');
+            
+                $request['url'] = $upload_url['image_url'];
+                $request['file_unique_id'] = $upload_url['public_id'];
+                $request['cloud_provider'] = 'CLOUDINARY';
+                $request['file_type'] = 'IMAGE';
+
+                // ::::::::::: Save data in media table :::::::::::
+
+                $media = $this->mediaService->store($request->all());
+                $media_id = $media->id;
+                $request['category_image'] = $media_id;
+
+            }
+            
+            $category = Category::create([
+                'name' => $request->name,
+                'parent_id' => !empty($request->parent_id)?$request->parent_id:NULL,
+                'category_image' => !empty($request['category_image'])?$request['category_image']:NULL,
+                'status' => 1
+            ]);
+            return redirect()->back()->with('success','Category Added Successfully');
+        }catch(\Exception $e){
+            return redirect()->back()->with('error','Something went wrong');
+        }
     }
 
     public function edit(Request $request){

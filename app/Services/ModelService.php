@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Media;
 use App\Models\PostMeta;
+use App\Models\Category;
 
 
 
@@ -19,6 +20,8 @@ class ModelService extends Service
 	protected Tag $tagService;
 	protected Media $mediaService;
 	protected PostMeta $postMetaService;
+	protected Category $categoryService;
+
 
 
     public function __construct(Container $container)
@@ -29,7 +32,13 @@ class ModelService extends Service
 		$this->tagService = $container->make(Tag::class);
 		$this->mediaService = $container->make(Media::class);
 		$this->postMetaService = $container->make(PostMeta::class);
+		$this->categoryService = $container->make(Category::class);
     }
+
+	public function categoryService()
+	{
+		return $this->categoryService;
+	}	
 
     public function userService()
 	{
@@ -56,5 +65,7 @@ class ModelService extends Service
 	{
 		return $this->mediaService;
 	}	
+
+
 
 }

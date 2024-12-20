@@ -35,23 +35,43 @@ class PostController extends Controller
     public function index(Request $request){
         // $relations = [''];
         $posts = $this->postService->list();
+       
         return Inertia::render('Posts/Index',[
             'type' => 'list',
-            'posts' => $posts
+            'posts' => $posts,
         ]);
     }
 
     public function create(Request $request){
         $categories = Category::get();
-
+        $post_type = [
+            [
+                'id' => 1,
+                'name' => 'Banner'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Popular'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Quotes'
+            ],
+            [
+                'id' => 4,
+                'name' => 'Highlighted'
+            ]
+        ];
         return Inertia::render('Posts/Index',[
             'type' => 'create',
-            'categories' => $categories
+            'categories' => $categories,
+            'post_type' => $post_type
         ]);
     }
 
     public function store(Request $request){
         try{
+            dd($request->all());
             $rules = [
                 'title' => 'required',
                 'short_name' => 'required',
@@ -115,12 +135,31 @@ class PostController extends Controller
 
         $thumbnail = $postDetail->thumbnail();
         // dd($postDetail);
+        $post_type = [
+            [
+                'id' => 1,
+                'name' => 'Banner'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Popular'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Quotes'
+            ],
+            [
+                'id' => 4,
+                'name' => 'Highlighted'
+            ]
+        ];
 
         return Inertia::render('Posts/Index',[
             'type' => 'edit',
             'categories' => $categories,
             'postDetail' => $postDetail,
-            'thumbnail' => $thumbnail
+            'thumbnail' => $thumbnail,
+            'post_type' => $post_type
         ]);
     }
 

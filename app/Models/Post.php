@@ -17,6 +17,7 @@ class Post extends Model
     protected $fillable = ['title','slug','short_name','category_id','author','image_name','excerpt','status','type_id'];
     protected $appends = ['content','meta_tags','thumbnail'];
 
+    
     public static function store($request){
         // dd($request['meta_tags']);
         $data = DB::transaction(function () use ($request) {
@@ -28,6 +29,7 @@ class Post extends Model
                 'author' => $request['author'] ,
                 'image_name' => $request['image_name'] ?? NULL,
                 'excerpt' => $request['excerpt'] ,
+                'type_id' => $request['type_id'] ?? NULL,
                 // 'content' => $request['content']
             ]);
 
@@ -61,6 +63,32 @@ class Post extends Model
                 $thumbnail['meta_value'] = $request['media_list_id'][0];
                 array_push($postMetaData, $thumbnail);
             }
+
+            if(!empty($request['fb_link'])){
+                $fbLink = $defaultData;
+                $fbLink['meta_key'] = 'fb_link';
+                $fbLink['meta_value'] = $request['fb_link'];
+                array_push($postMetaData, $fbLink);
+            }
+            if(!empty($request['insta_link'])){
+                $insta_link = $defaultData;
+                $insta_link['meta_key'] = 'insta_link';
+                $insta_link['meta_value'] = $request['insta_link'];
+                array_push($postMetaData, $insta_link);
+            }
+            if(!empty($request['twitter_link'])){
+                $twitter_link = $defaultData;
+                $twitter_link['meta_key'] = 'twitter_link';
+                $twitter_link['meta_value'] = $request['twitter_link'];
+                array_push($postMetaData, $twitter_link);
+            }
+            if(!empty($request['email_link'])){
+                $email_link = $defaultData;
+                $email_link['meta_key'] = 'email_link';
+                $email_link['meta_value'] = $request['email_link'];
+                array_push($postMetaData, $email_link);
+            }
+
 
             PostMeta::insert($postMetaData);
 
@@ -171,7 +199,7 @@ class Post extends Model
         return $this->belongsToMany(Media::class, 'post_media', 'post_id', 'media_id');
     }
 
-    public  function thumbnail(){
+    public function thumbnail(){
         $media_id = $this->postMetas()->where('meta_key','thumbnail')->value('meta_value');
         if($media_id){
            $media = Media::find($media_id);
@@ -179,6 +207,7 @@ class Post extends Model
         }
         return null;
     }
+
 
     // :::::::::::: Mutators :::::::::::::
     
