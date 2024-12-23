@@ -9,4 +9,5 @@ class AppSetting extends Model
 {
     use HasFactory;
     protected $fillable = ['name','key','value','type','status'];
+    
 }

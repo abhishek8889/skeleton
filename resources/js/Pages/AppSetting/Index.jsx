@@ -7,10 +7,28 @@ import Table from '@/Components/Table/Table';
 
 
 
-export default function Index({auth}) {
+export default function Index({auth ,settingList,detail ,type=''}) {
     const [showForm , setShowForm] = useState(false);
+    const [formTitle , setFormTitle] = useState('Add new field');
     const [showFormBtn , setShowFormBtn] = useState('Add new field');
-    const [tagHeader ,setTagHeader] = useState([]);
+    const [tagHeader,setTagHeader] = useState([
+        {
+            key: 'sr_no',
+            type: 'text', // or any type you need
+            title: 'Sr No', // or any title you need
+        },
+        {
+            key: 'name',
+            type: 'text',
+            title: 'Name',
+        },
+        {
+            key: 'key',
+            type: 'text',
+            title: 'Key',
+        }
+    ]);
+
     const [formParams , setFormParams] = useState({
             url : route('settings.create'),
             method : 'POST',
@@ -145,6 +163,9 @@ export default function Index({auth}) {
         });
     }
 
+
+    
+
     const handleAddFormBtn = () => {
         setShowForm((prev) => {
             const newState = !prev;
@@ -153,6 +174,87 @@ export default function Index({auth}) {
         });
     }
 
+    useEffect(() => {
+        if(type == 'edit'){
+            setShowForm((prev) => {
+                const newState = !prev;
+                setShowFormBtn(newState ? "Remove form" : "Add new field");
+                return newState;
+            });
+            setFormTitle('Edit app setting');
+
+            setFormParams(
+                {
+                    url : route('settings.create'),
+                    method : 'POST',
+                    submitButton:{
+                        'title' : 'Submit',
+                        'className' : ''
+                    },
+                    coloumns : [ 
+                        {
+                            box:{
+                                'className' : 'mb-1 mt-3',
+                                'id' : ''
+                            },
+                            label : {
+                                'title' : 'Field Name',
+                                'className' : 'text-gray-700 text-sm font-bold mb-2',
+                                'id' : 'name',
+                                'for' : 'name'
+                            },
+                            field:{
+                                type : 'input',
+                                name : 'name',
+                                value : detail.name ? detail.name : '',
+                                params : {
+                                    'type' : 'text',
+                                    'className' : 'shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline',
+                                    'id' : 'name',
+                                    'placeholder' : 'Enter field name'
+                                },
+                            }
+                        },
+                        {
+                            box:{
+                                'className' : 'mb-1',
+                                'id' : ''
+                            },
+                            label : {
+                                'title' : 'Field Type',
+                                'className' : 'text-gray-700 text-sm font-bold mb-2',
+                                'id' : 'field_type',
+                                'for' : 'field_type'
+                            },
+                            field:{
+                                type : 'select',
+                                name : 'type',
+                                value : detail.type ? detail.type : '',
+                                params : {
+                                    'className' : 'shadow appearance-none border rounded w-full text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2',
+                                    'id' : 'field_type',
+                                },
+                                options :[ 
+                                    {
+                                        'value' : 'text',
+                                        'text' : 'Text',
+                                    },
+                                    {
+                                        'value' : 'textarea',
+                                        'text' : 'Textarea',
+                                    },
+                                    {
+                                        'value' : 'checkbox',
+                                        'text' : 'Checkbox',
+                                    }
+                                ]
+                            },
+                        }
+                    ]
+                }
+            );
+        }
+    },[type,detail]);
 
     return (
         <AuthenticatedLayout
@@ -161,22 +263,39 @@ export default function Index({auth}) {
         >
         <Head title="App settings" />
         <div className="py-12">
-            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <PrimaryButton  onClick={handleAddFormBtn} className={formParams.submitButton?.className ?? ''}>
-                    {showFormBtn ? showFormBtn : 'Add new field'}
-                    </PrimaryButton>
-                    { showForm && <FormBox  formParams={formParams} changeField={changeField} /> }
-                    {/* {tagHeader  && (
-                        <Table 
-                            posts=''
-                            editRoute={(id) => route('posts.edit',{id})} 
-                            deleteRoute={(id) => route('posts.remove',{id})} 
-                            tagHeader={tagHeader}
-                        />
-                    )} */}
+            {
+            showForm && 
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                    <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg"> 
+                        <h5> {formTitle ? formTitle : ''}</h5>
+                        <FormBox formParams={formParams}  changeField={changeField} /> 
+                    </div>
+                </div> 
+            }
+            { type != 'edit' &&  
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8  mt-3">
+                    <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                        <div className="d-flex">
+                            <div>
+                                <h4> Setting list </h4>
+                            </div>
+                            <div className="">
+                                <PrimaryButton  onClick={handleAddFormBtn} className={formParams.submitButton?.className ?? ''}>
+                                    {showFormBtn ? showFormBtn : 'Add new field'}
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                        {tagHeader  && (
+                            <Table 
+                                posts={settingList}
+                                editRoute={(id) => route('settings.edit',{id})} 
+                                deleteRoute={(id) => route('settings.destroy',{id})} 
+                                tagHeader={tagHeader}
+                            />
+                        )}
+                    </div>
                 </div>
-            </div>
+            }
         </div> 
         
         

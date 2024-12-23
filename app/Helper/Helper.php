@@ -11,4 +11,10 @@ class Helper{
     public static function generateRandomString($length = 10) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)))), 1, $length);
     }
+
+    public static function generateUniqueKey($name =''){
+        $random_string = self::generateRandomString(4);
+        $slug = strtolower(str_replace(' ', '_', $name)) . '_' . strtolower($random_string);
+        return $slug;
+    }
 }

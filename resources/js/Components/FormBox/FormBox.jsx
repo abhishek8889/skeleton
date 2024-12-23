@@ -1,27 +1,60 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState ,useRef } from 'react';
 import PrimaryButton from '@/Components/PrimaryButton';
 
+import { ToastContainer, toast } from 'react-toastify';
 
 const FormBox = ({formParams ,changeField}) => {
-    const [fieldTypeBox, setFieldTypeBox] = useState('');
-    const [formData , setFormData] = useState({});
-    const  handleSubmit = (e) => {
-        e.preventDefault();
-
-    }
+    const [formData  , setFormData] = useState(new FormData());
+    const formRef = useRef(null); // Add a ref for the form
 
     const handleInputChange = (e) => {
-        formData.map(() => {
-            if(e.target.name === formData.name){
-                setFormData({...formData , [e.target.name] : e.target.value});
+        if (formData.has(e.target.name)) {
+            formData.set(e.target.name, e.target.value);
+        } else {
+            formData.append(e.target.name, e.target.value);
+        }
+    }    
+  
+
+    const  handleSubmit = (e) => {
+        e.preventDefault();
+        axios({
+            method: formParams.method?formParams.method:'POST',
+            url: formParams.url?formParams.url:'',
+            data: formData,
+            headers: { 
+                "Content-Type": "multipart/form-data" 
+            },
+        })
+        .then(function (response) {
+            if(response.data.status == 'success' && response.data.success == true){
+                toast.success(`${response.data.message?response.data.message:'Success'}`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+                formRef.current.reset();
+                setFormData(new FormData());
             }
         })
+        .catch(function (response) {
+            if(response.status == 400){
+                if(response.response.data.type == 'validation'){
+                    console.log(response.response.data.errors);
+                }
+            }
+        });
     }
 
 
     return (
         <div className="row">
-            <form onSubmit={handleSubmit} >
+            <form ref={formRef}  onSubmit={handleSubmit} >
                 {
                     formParams.coloumns.map((form,index) => {
                         return (

@@ -59,6 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function (){
         Route::get('/','index')->name('settings.index');
         Route::get('/fields','settingFields')->name('settings.fields');
         Route::post('/create','store')->name('settings.create');
+        Route::get('/edit/{id}','edit')->name('settings.edit');
+        Route::post('/destroy/{id}','edit')->name('settings.destroy');
+        
     });
 });
 
