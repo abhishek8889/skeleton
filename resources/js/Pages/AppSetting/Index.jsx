@@ -103,15 +103,15 @@ export default function Index({auth ,settingList,detail ,type=''}) {
         });
 
     const changeField = (val) => {
+
         let fieldTag = '';
         let fieldType = '';
         let fieldLabel = '';
         let fieldBoxClass = '';
+        
         if(val == 'text'){
             fieldTag = 'input';
             fieldType = 'text';
-
-
         }else if(val == 'textarea'){
             fieldTag = 'textarea';
         }else if(val == 'checkbox'){
@@ -151,16 +151,36 @@ export default function Index({auth ,settingList,detail ,type=''}) {
         }
     
       
+        // setFormParams((prev) => {
+        //     const updatedColumns = [...prev.coloumns]; // Copy the existing `coloumns` array
+        
+        //     updatedColumns.splice(2, 0, newField); // Insert the new field at index 1 (second position)
+
+        //     return {
+        //         ...prev, // Keep all previous properties
+        //         coloumns: updatedColumns, // Update the `coloumns` array with the new field inserted
+        //     };
+
+        // });
+
         setFormParams((prev) => {
             const updatedColumns = [...prev.coloumns]; // Copy the existing `coloumns` array
         
-            updatedColumns.splice(2, 0, newField); // Insert the new field at index 1 (second position)
-
+            if (updatedColumns.length > 2) {
+                // If there is already a field at index 2, remove it
+                updatedColumns.splice(2, 1);
+            }
+        
+            // Insert the new field at index 2 (third position)
+            updatedColumns.splice(2, 0, newField);
+        
             return {
                 ...prev, // Keep all previous properties
                 coloumns: updatedColumns, // Update the `coloumns` array with the new field inserted
             };
         });
+
+       
     }
 
 
@@ -267,7 +287,14 @@ export default function Index({auth ,settingList,detail ,type=''}) {
             showForm && 
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                     <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg"> 
-                        <h5> {formTitle ? formTitle : ''}</h5>
+                        <div className="d-flex">
+                            <h5> {formTitle ? formTitle : ''}</h5>
+                            <div className="">
+                                <PrimaryButton  onClick={handleAddFormBtn} className={formParams.submitButton?.className ?? ''}>
+                                    {showFormBtn ? 'X' : ''}
+                                </PrimaryButton>
+                            </div>
+                        </div>
                         <FormBox formParams={formParams}  changeField={changeField} /> 
                     </div>
                 </div> 
@@ -280,9 +307,11 @@ export default function Index({auth ,settingList,detail ,type=''}) {
                                 <h4> Setting list </h4>
                             </div>
                             <div className="">
-                                <PrimaryButton  onClick={handleAddFormBtn} className={formParams.submitButton?.className ?? ''}>
-                                    {showFormBtn ? showFormBtn : 'Add new field'}
-                                </PrimaryButton>
+                                {!showForm &&
+                                    <PrimaryButton  onClick={handleAddFormBtn} className={formParams.submitButton?.className ?? ''}>
+                                        {showFormBtn ? showFormBtn : ''}
+                                    </PrimaryButton>
+                                }
                             </div>
                         </div>
                         {tagHeader  && (

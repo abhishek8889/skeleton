@@ -71,7 +71,7 @@ class PostController extends Controller
 
     public function store(Request $request){
         try{
-            dd($request->all());
+            // dd($request->all());
             $rules = [
                 'title' => 'required',
                 'short_name' => 'required',

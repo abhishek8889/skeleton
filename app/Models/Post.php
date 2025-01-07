@@ -25,7 +25,7 @@ class Post extends Model
                 'title' => $request['title'] ,
                 'slug' => Helper::generateSlug($request['title']) ,
                 'short_name' => $request['short_name'] ,
-                'category_id' => $request['category_id'] ,
+                'category_id' => $request['category_id'] ?? NULL ,
                 'author' => $request['author'] ,
                 'image_name' => $request['image_name'] ?? NULL,
                 'excerpt' => $request['excerpt'] ,
@@ -35,62 +35,7 @@ class Post extends Model
 
             // :::::::::::::::::: Adding data in post meta table ::::::::::::::::::
 
-            $postMetaData = array();
-            $defaultData = array(
-                'post_id' => $data->id,
-                'meta_key' => '',
-                'meta_value' => '',
-                'created_at' => now(),
-                'updated_at' => now(),
-            );
-
-            if(!empty($request['content'])){
-                $content = $defaultData;
-                $content['meta_key'] = 'content';
-                $content['meta_value'] = $request['content'];
-                array_push($postMetaData, $content);
-            }
-            if( !empty($request['meta_tags'])){
-                $tags = $defaultData;
-                $tags['meta_key'] = 'meta_tags';
-                $tags['meta_value'] = json_encode($request['meta_tags']);
-                array_push($postMetaData, $tags);
-            }
-
-            if(!empty($request['media_list_id']) && is_array(($request['media_list_id']))){
-                $thumbnail = $defaultData;
-                $thumbnail['meta_key'] = 'thumbnail';
-                $thumbnail['meta_value'] = $request['media_list_id'][0];
-                array_push($postMetaData, $thumbnail);
-            }
-
-            if(!empty($request['fb_link'])){
-                $fbLink = $defaultData;
-                $fbLink['meta_key'] = 'fb_link';
-                $fbLink['meta_value'] = $request['fb_link'];
-                array_push($postMetaData, $fbLink);
-            }
-            if(!empty($request['insta_link'])){
-                $insta_link = $defaultData;
-                $insta_link['meta_key'] = 'insta_link';
-                $insta_link['meta_value'] = $request['insta_link'];
-                array_push($postMetaData, $insta_link);
-            }
-            if(!empty($request['twitter_link'])){
-                $twitter_link = $defaultData;
-                $twitter_link['meta_key'] = 'twitter_link';
-                $twitter_link['meta_value'] = $request['twitter_link'];
-                array_push($postMetaData, $twitter_link);
-            }
-            if(!empty($request['email_link'])){
-                $email_link = $defaultData;
-                $email_link['meta_key'] = 'email_link';
-                $email_link['meta_value'] = $request['email_link'];
-                array_push($postMetaData, $email_link);
-            }
-
-
-            PostMeta::insert($postMetaData);
+            $this->storePostMeta($data->id, $request);
 
             // :::::::::::::::::: End ::::::::::::::::::
 
@@ -107,6 +52,39 @@ class Post extends Model
             return $data;
         });
         return $data;
+    }
+
+    /**
+     * Store post meta data.
+    */
+    private static function storePostMeta($postId, $request)
+    {
+        $metaKeys = [
+            'content' => $request['content'] ?? null,
+            'meta_tags' => !empty($request['meta_tags']) ? json_encode($request['meta_tags']) : null,
+            'thumbnail' => $request['media_list_id'][0] ?? null,
+            'fb_link' => $request['fb_link'] ?? null,
+            'insta_link' => $request['insta_link'] ?? null,
+            'twitter_link' => $request['twitter_link'] ?? null,
+            'email_link' => $request['email_link'] ?? null,
+        ];
+
+        $postMetaData = [];
+        foreach ($metaKeys as $key => $value) {
+            if (!empty($value)) {
+                $postMetaData[] = [
+                    'post_id' => $postId,
+                    'meta_key' => $key,
+                    'meta_value' => $value,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+        }
+
+        if (!empty($postMetaData)) {
+            PostMeta::insert($postMetaData);
+        }
     }
 
     public static function put($request){
