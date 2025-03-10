@@ -34,12 +34,13 @@ class PostController extends Controller
 
     public function index(Request $request){
         // $relations = [''];
-        $posts = $this->postService->list();
+        // $posts = $this->postService->list();
        
-        return Inertia::render('Posts/Index',[
-            'type' => 'list',
-            'posts' => $posts,
-        ]);
+        // return Inertia::render('Posts/Index',[
+        //     'type' => 'list',
+        //     'posts' => $posts,
+        // ]);
+        return view('admin.pages.posts.index');
     }
 
     public function create(Request $request){

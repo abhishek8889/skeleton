@@ -70,6 +70,10 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::controller(DashboardController::class)->group(function(){
         Route::get('dashboard','index')->name('admin.dashboard');
     });
+
+    Route::controller(PostController::class)->group(function(){
+        Route::get('posts','index')->name('admin.posts');
+    });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -124,7 +124,7 @@
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href="pages-account-settings-account.html" class="menu-link">
+          <a href="{{ route('admin.posts') }}" class="menu-link">
             <div class="text-truncate">List</div>
           </a>
         </li>
