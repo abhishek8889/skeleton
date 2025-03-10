@@ -17,4 +17,5 @@ class Helper{
         $slug = strtolower(str_replace(' ', '_', $name)) . '_' . strtolower($random_string);
         return $slug;
     }
+    
 }
